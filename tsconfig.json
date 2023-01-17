@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "module": "commonjs",
+    "outDir": "./lib",
+    "rootDir": "./",
+    "allowJs": true,
+    "target": "es2019",
+    "sourceMap": false,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "paths": {
+      "src/*": ["./src/*"],
+      "tests/*": ["./tests/*"],
+      "types/*": ["./src/types/*"],
+      "services/*": ["./src/modules/*"],
+      "constants/*": ["./src/constants/*"],
+      "errors/*": ["./src/errors/*"],
+      "utils/*": ["./src/utils/*"]
+    }
+  },
+  "exclude": ["node_modules", "lib"],
+  "include": [
+    "./src/**/*",
+    "./tests/**/*",
+    "node_modules/ts-jest/globals.d.ts",
+    "node_modules/ts-jest/globals.d.ts",
+    "node_modules/ts-jest/globals.d.ts",
+    "node_modules/ts-jest/globals.d.ts"
+  ],
+  "ts-node": {
+    "files": true
+  }
+}
