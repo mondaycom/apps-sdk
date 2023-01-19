@@ -7,7 +7,6 @@
   "scripts": {
     "test": "jest --forceExit",
     "test:coverage": "npm run test -- --coverage",
-    "test-run": "docker-compose exec web yarn test",
     "lint": "eslint --ext .js,.ts src",
     "lint-fix": "npm run lint -- --fix",
     "prettier:fix": "prettier --write .",
@@ -21,7 +20,8 @@
   "keywords": [
     "MONDAY",
     "APPS",
-    "SDK"
+    "SDK",
+    "MONDAY-CODE"
   ],
   "engines": {
     "node": ">= 18.12.1"

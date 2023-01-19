@@ -31,10 +31,6 @@
   "include": [
     "./src/**/*",
     "./tests/**/*",
-    "node_modules/ts-jest/globals.d.ts",
-    "node_modules/ts-jest/globals.d.ts",
-    "node_modules/ts-jest/globals.d.ts",
-    "node_modules/ts-jest/globals.d.ts"
   ],
   "ts-node": {
     "files": true
