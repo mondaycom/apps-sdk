@@ -1,13 +1,13 @@
 {
   "name": "apps-sdk",
   "version": "1.0.0",
-  "description": "MONDAY APPS SDK for JavaScript",
-  "main": "./lib/index.js",
-  "types": "./index.d.ts",
+  "description": "monday apps SDK for NodeJS",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "jest --forceExit",
     "test:coverage": "npm run test -- --coverage",
-    "lint": "eslint --ext .js,.ts src",
+    "lint": "eslint --ext .js,.ts lib",
     "lint-fix": "npm run lint -- --fix",
     "prettier:fix": "prettier --write .",
     "prettier:check": "prettier --check .",
@@ -24,7 +24,7 @@
     "MONDAY-CODE"
   ],
   "engines": {
-    "node": ">= 18.12.1"
+    "node": ">= 14.17.0"
   },
   "author": "monday.com Apps Team",
   "license": "MIT",
@@ -34,7 +34,6 @@
   "homepage": "https://github.com/mondaycom/apps-sdk#readme",
   "devDependencies": {
     "@types/jest": "^29.2.5",
-    "@types/mocha": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "eslint": "^8.32.0",
@@ -43,5 +42,8 @@
     "ts-jest": "^29.0.5",
     "tsconfig-paths": "^4.1.2",
     "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "@mondaydotcomorg/eslint-config": "^0.0.6"
   }
 }

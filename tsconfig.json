@@ -4,9 +4,10 @@
       "es2020",
       "dom"
     ],
+    "types": ["node"],
     "module": "commonjs",
-    "outDir": "./lib",
-    "rootDir": "./",
+    "outDir": "./dist",
+    "rootDir": "./lib",
     "allowJs": true,
     "target": "es2019",
     "sourceMap": false,
@@ -15,22 +16,18 @@
     "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "declaration": true,
     "baseUrl": ".",
     "skipLibCheck": true,
+    "noImplicitAny": false,
     "paths": {
-      "src/*": ["./src/*"],
-      "tests/*": ["./tests/*"],
-      "types/*": ["./src/types/*"],
-      "services/*": ["./src/modules/*"],
-      "constants/*": ["./src/constants/*"],
-      "errors/*": ["./src/errors/*"],
-      "utils/*": ["./src/utils/*"]
+      "lib/*": ["./lib/*"],
+      "tests/*": ["./tests/*"]
     }
   },
-  "exclude": ["node_modules", "lib"],
+  "exclude": ["node_modules", ".vscode/**/*", "dist"],
   "include": [
-    "./src/**/*",
-    "./tests/**/*",
+    "./lib/**/*",
   ],
   "ts-node": {
     "files": true
