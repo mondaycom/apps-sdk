@@ -1,5 +1,5 @@
 {
-  "name": "apps-sdk",
+  "name": "@mondaydotcomorg/apps-sdk",
   "version": "1.0.0",
   "description": "monday apps SDK for NodeJS",
   "main": "./dist/index.js",
