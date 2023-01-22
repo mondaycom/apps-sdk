@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": ["node"],
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./lib",
+    "allowJs": true,
+    "target": "es2019",
+    "sourceMap": false,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "paths": {
+      "lib/*": ["./lib/*"],
+      "tests/*": ["./tests/*"]
+    }
+  },
+  "exclude": ["node_modules", ".vscode/**/*", "dist"],
+  "include": [
+    "./lib/**/*",
+  ],
+  "ts-node": {
+    "files": true
+  }
+}
