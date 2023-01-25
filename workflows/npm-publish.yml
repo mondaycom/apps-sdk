@@ -1,8 +1,6 @@
 name: Node.js Package
 
 on:
-  release:
-    types: [created]
   push:
     branches:
       - master
@@ -15,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.17
-      - run: yarn install --frozen-lockfile
+      - run: yarn prepublish-and-build
 
   publish-npm:
     needs: build
@@ -26,8 +24,7 @@ jobs:
         with:
           node-version: 14.17
           registry-url: https://registry.npmjs.org/
-      - run: yarn install --frozen-lockfile
-      - run: yarn tsc
+      - run: yarn prepublish-and-build
       - run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

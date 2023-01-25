@@ -11,7 +11,8 @@
     "lint-fix": "npm run lint -- --fix",
     "prettier:fix": "prettier --write .",
     "prettier:check": "prettier --check .",
-    "build": "tsc --project ./tsconfig.json"
+    "build": "tsc --project ./tsconfig.json",
+    "prepublish-and-build": "yarn install --frozen-lockfile && yarn build"
   },
   "repository": {
     "type": "git",
