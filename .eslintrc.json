@@ -45,11 +45,50 @@
       "ts": "never"
     }],
     "node/no-missing-import": "off",
-    "n/no-missing-import": "off"
+    "n/no-missing-import": "off",
+    "no-plusplus": "off",
+    "no-await-in-loop": "off",
+    "class-methods-use-this": "off",
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false, // Functions get hoisted, so it's really not an issue
+        "classes": true,
+        "variables": true
+      }
+    ]
   },
   "env": {
     "browser": true,
     "es2022": true
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.js", "**/*.test.ts"],
+      "env": { "jest": true }
+    },
+    {
+      "files": ["**/*.{ts,tsx}"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"],
+      "settings": {
+        "import/resolver": "typescript"
+      },
+      "rules": {
+        "no-shadow": "off",
+        "no-undef": "off", // eslint doesn't play nice with TS global types
+        "no-unused-vars": "off", // We get this from @typescript-eslint
+        "no-loop-func": "off",
+        "lines-between-class-members": "off",
+        "max-classes-per-file": "off",
+        "no-restricted-imports": ["error", "danger"],
+        "@typescript-eslint/array-type": ["error", { "default": "generic", "readonly": "generic" }],
+        "@typescript-eslint/ban-types": "error",
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "import/prefer-default-export": "off",
+        "import/extensions": "off"
+      }
+    }
+  ]
 }
 
