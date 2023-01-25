@@ -27,8 +27,7 @@
     "plugin:n/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "prettier",
-    "airbnb-base"
+    "prettier"
   ],
   "rules": {
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
