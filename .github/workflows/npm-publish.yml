@@ -15,7 +15,7 @@ jobs:
           node-version: 14.17
           registry-url: https://registry.npmjs.org/
       - run: yarn prepublish-and-build
-      - run: yarn publish
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
       - uses: "marvinpinto/action-automatic-releases@latest"
