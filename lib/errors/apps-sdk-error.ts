@@ -1,10 +1,8 @@
 export enum ERROR_CODE {
-  GENERAL = 'general',
-  RECORD_NOT_FOUND = 'recordNotFound',
-  CONFLICT = 'conflict',
+  GENERAL = 'general'
 }
-export class ServiceError extends Error {
-  constructor(public errorCode: ERROR_CODE, public title: string, public message: string) {
+export class BaseError extends Error {
+  constructor(public errorCode: ERROR_CODE, public message: string) {
     super(message);
   }
 }

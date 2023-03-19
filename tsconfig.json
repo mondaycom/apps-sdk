@@ -4,8 +4,11 @@
       "es2020",
       "dom"
     ],
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "module": "commonjs",
+    "esModuleInterop": true,
     "outDir": "./dist",
     "rootDir": "./lib",
     "allowJs": true,
@@ -21,13 +24,28 @@
     "skipLibCheck": true,
     "noImplicitAny": false,
     "paths": {
-      "lib/*": ["./lib/*"],
-      "tests/*": ["./tests/*"]
+      "lib/*": [
+        "./lib/*"
+      ],
+      "tests/*": [
+        "./tests/*"
+      ],
+      "types/*": [
+        "./lib/types/*"
+      ],
+      "utils/*": [
+        "./lib/utils/*"
+      ]
     }
   },
-  "exclude": ["node_modules", ".vscode/**/*", "dist"],
+  "exclude": [
+    "node_modules",
+    ".vscode/**/*",
+    "dist",
+    "tests"
+  ],
   "include": [
-    "./lib/**/*",
+    "./lib/**/*"
   ],
   "ts-node": {
     "files": true
