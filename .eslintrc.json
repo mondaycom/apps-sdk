@@ -8,7 +8,8 @@
         "alwaysTryTypes": true
       },
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "moduleDirectory": ["node_modules", "src/"]
       }
     }
   },
@@ -27,7 +28,9 @@
     "plugin:n/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "prettier"
+    "prettier",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
   ],
   "rules": {
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
@@ -68,7 +71,8 @@
       "env": { "jest": true }
     },
     {
-      "files": ["**/*.{ts,tsx}"],
+      "files": ["**/*.ts"],
+      "extends": ["plugin:@typescript-eslint/eslint-recommended", "plugin:@typescript-eslint/recommended"],
       "parser": "@typescript-eslint/parser",
       "plugins": ["@typescript-eslint"],
       "settings": {
