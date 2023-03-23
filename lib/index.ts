@@ -1,3 +1,5 @@
-export default function helloWorld(text: string): string {
-  return `text: ${text}`;
-}
+import { SecureStorage } from 'lib/secure-storage';
+
+export {
+  SecureStorage
+};
