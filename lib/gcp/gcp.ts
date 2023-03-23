@@ -1,7 +1,7 @@
 import { GoogleAuth } from 'google-auth-library';
 import fetch from 'node-fetch';
 
-import { GcpConnectionData, SignJwtResponse } from 'types/gcp';
+import { GCP_SCOPES, GcpConnectionData, SignJwtResponse } from 'types/gcp';
 import { validateEnvironment } from 'utils/env';
 
 const generateJwtSigningUrl = (serviceAccountEmail: string) => `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccountEmail}:signJwt`;
@@ -10,7 +10,7 @@ export const getGcpConnectionData = async (): Promise<GcpConnectionData> => {
   validateEnvironment();
   
   const auth = new GoogleAuth();
-  auth.defaultScopes = ['https://www.googleapis.com/auth/cloud-platform'];
+  auth.defaultScopes = [GCP_SCOPES.CLOUD_PLATFORM];
   const projectId = await auth.getProjectId();
   const serviceAccountEmail = (await auth.getCredentials()).client_email as string;
   const accessToken = await auth.getAccessToken() as string;

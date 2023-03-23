@@ -9,3 +9,7 @@ export type GcpConnectionData = {
   projectId: string,
   serviceAccountEmail: string
 }
+
+export enum GCP_SCOPES {
+  CLOUD_PLATFORM = 'https://www.googleapis.com/auth/cloud-platform'
+}
