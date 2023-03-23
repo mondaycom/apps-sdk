@@ -4,6 +4,8 @@ import fetch from 'node-fetch';
 import { GcpConnectionData, SignJwtResponse } from 'types/gcp';
 import { validateEnvironment } from 'utils/env';
 
+const generateJwtSigningUrl = (serviceAccountEmail: string) => `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccountEmail}:signJwt`;
+
 export const getGcpConnectionData = async (): Promise<GcpConnectionData> => {
   validateEnvironment();
   
@@ -24,7 +26,8 @@ export const getGcpConnectionData = async (): Promise<GcpConnectionData> => {
     exp: expirationInSeconds
   });
   
-  const response = await fetch(`https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccountEmail}:signJwt`, {
+  const jwtSigningUrl = generateJwtSigningUrl(serviceAccountEmail);
+  const response = await fetch(jwtSigningUrl, {
       method: 'POST',
       body: JSON.stringify({ payload }),
       headers: {
