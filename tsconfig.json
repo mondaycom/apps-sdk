@@ -33,6 +33,9 @@
       "types/*": [
         "./lib/types/*"
       ],
+      "errors/*": [
+        "./lib/errors/*"
+      ],
       "utils/*": [
         "./lib/utils/*"
       ]

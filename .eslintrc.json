@@ -1,28 +1,4 @@
 {
-  "settings": {
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts"]
-    },
-    "import/resolver": {
-      "typescript": {
-        "alwaysTryTypes": true
-      },
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "moduleDirectory": ["node_modules", "src/"]
-      }
-    }
-  },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": "./tsconfig.json",
-    "ecmaVersion": 12,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "import",
-    "@typescript-eslint"
-  ],
   "extends": [
     "eslint:recommended",
     "plugin:n/recommended",
@@ -32,6 +8,26 @@
     "plugin:import/recommended",
     "plugin:import/typescript"
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".ts"
+        ],
+        "moduleDirectory": [
+          "node_modules",
+          "src/"
+        ]
+      },
+      "typescript": {}
+    }
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
   "rules": {
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     "@typescript-eslint/no-unused-vars": "error",
@@ -59,40 +55,128 @@
         "classes": true,
         "variables": true
       }
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "curly": [
+      "error",
+      "all"
+    ],
+    "require-yield": 0,
+    "eol-last": [
+      "error",
+      "always"
+    ],
+    "no-unused-vars": "error",
+    "sort-imports": [
+      "error",
+      {
+        "ignoreCase": false,
+        "ignoreDeclarationSort": true,
+        // don"t want to sort import lines, use eslint-plugin-import instead
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": [
+          "none",
+          "all",
+          "multiple",
+          "single"
+        ],
+        "allowSeparatedGroups": true
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          [
+            "sibling",
+            "parent"
+          ],
+          "index",
+          "unknown"
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
     ]
   },
   "env": {
-    "browser": true,
-    "es2022": true
+    "es2022": true,
+    "node": true
+  },
+  "globals": {
+    "logger": true,
+    "secrets": true
   },
   "overrides": [
     {
-      "files": ["**/*.test.js", "**/*.test.ts"],
-      "env": { "jest": true }
+      "files": [
+        "tests/**/*"
+      ],
+      "env": {
+        "jest": true
+      }
     },
     {
-      "files": ["**/*.ts"],
-      "extends": ["plugin:@typescript-eslint/eslint-recommended", "plugin:@typescript-eslint/recommended"],
+      "files": [
+        "**/*.ts"
+      ],
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+      ],
       "parser": "@typescript-eslint/parser",
-      "plugins": ["@typescript-eslint"],
-      "settings": {
-        "import/resolver": "typescript"
-      },
+      "plugins": [
+        "import",
+        "@typescript-eslint"
+      ],
       "rules": {
         "no-shadow": "off",
-        "no-undef": "off", // eslint doesn't play nice with TS global types
-        "no-unused-vars": "off", // We get this from @typescript-eslint
+        "no-undef": "off",
+        // eslint doesn't play nice with TS global types
+        "no-unused-vars": "off",
+        // We get this from @typescript-eslint
         "no-loop-func": "off",
         "lines-between-class-members": "off",
         "max-classes-per-file": "off",
-        "no-restricted-imports": ["error", "danger"],
-        "@typescript-eslint/array-type": ["error", { "default": "generic", "readonly": "generic" }],
+        "no-restricted-imports": [
+          "error",
+          "danger"
+        ],
+        "@typescript-eslint/array-type": [
+          "error",
+          {
+            "default": "generic",
+            "readonly": "generic"
+          }
+        ],
         "@typescript-eslint/ban-types": "error",
-        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_"
+          }
+        ],
         "import/prefer-default-export": "off",
-        "import/extensions": "off"
+        "import/extensions": "off",
+        "no-empty": "warn",
+        "@typescript-eslint/no-inferrable-types": "warn",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off"
       }
     }
   ]
 }
-
