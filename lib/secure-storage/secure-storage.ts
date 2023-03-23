@@ -37,7 +37,7 @@ const secureStorageFetch = async <T>(path: string, token: Token, options: Reques
   const result = await fetchWrapper<VaultBaseResponse>(path, fetchObj);
   
   if (isDefined(result.errors)) {
-    logger.debug(`Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`)
+    logger.debug(`Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`);
     throw new BadRequestError('Provided input is invalid');
   }
   
@@ -52,12 +52,12 @@ const generateCrudPath = (path: string, id?: AppId) => {
   const { secureStorageAddress } = getMondayCodeContext();
   
   if (!isDefined(path)) {
-    throw new BadRequestError('Missing secret key')
+    throw new BadRequestError('Missing secret key');
   }
   
   if (!isDefined(id)) {
-    logger.debug('[generateCrudPath] projectId is not defined')
-    throw new InternalServerError('An issue occurred while accessing secure storage')
+    logger.debug('[generateCrudPath] projectId is not defined');
+    throw new InternalServerError('An issue occurred while accessing secure storage');
   }
   
   const generalSecretPath = 'v1/kv/data';
@@ -108,8 +108,8 @@ const authenticate = async (connectionData: ConnectionData): Promise<ConnectionD
   }
   
   if (!isDefined(id)) {
-    logger.debug('[authenticate] projectId is not defined')
-    throw new InternalServerError('An issue occurred while accessing secure storage')
+    logger.debug('[authenticate] projectId is not defined');
+    throw new InternalServerError('An issue occurred while accessing secure storage');
   }
   
   return { token, expireTime, id };
@@ -126,7 +126,7 @@ export class SecureStorage implements ISecureStorageInstance {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
     await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData.token, { method: 'DELETE' });
-    logger.info(`[SecureStorage] Deleted data for key from secure storage\nkey: ${key}`, { passThrough: true })
+    logger.info(`[SecureStorage] Deleted data for key from secure storage\nkey: ${key}`, { passThrough: true });
     return true;
   }
   
@@ -134,7 +134,7 @@ export class SecureStorage implements ISecureStorageInstance {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
     const result = await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData.token, { method: 'GET' });
-    logger.info(`[SecureStorage] Got data for key from secure storage\nkey: ${key}`, { passThrough: true })
+    logger.info(`[SecureStorage] Got data for key from secure storage\nkey: ${key}`, { passThrough: true });
     return result.data as T;
   }
   
@@ -145,7 +145,7 @@ export class SecureStorage implements ISecureStorageInstance {
       method: 'PUT',
       body: { data: value }
     });
-    logger.info(`[SecureStorage] Set data for key in secure storage\nkey: ${key}`, { passThrough: true })
+    logger.info(`[SecureStorage] Set data for key in secure storage\nkey: ${key}`, { passThrough: true });
     return true;
   }
 }

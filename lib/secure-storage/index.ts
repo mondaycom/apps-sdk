@@ -7,4 +7,4 @@ const selectedSecureStorage = isLocalEnvironment() ? LocalSecureStorage : Secure
 
 export {
   selectedSecureStorage as SecureStorage
-}
+};

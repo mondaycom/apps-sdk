@@ -10,4 +10,4 @@ export enum LogMethods {
   WARNING = 'warn'
 }
 
-console.warn()
+console.warn();

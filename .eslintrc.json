@@ -34,7 +34,6 @@
     "@typescript-eslint/no-var-requires": "off",
     "no-useless-return": "off",
     "object-curly-spacing": "off",
-    "semi": "off",
     "unicorn/no-array-callback-reference": "off",
     "unicorn/no-array-method-this-argument": "off",
     "indent": "off",
