@@ -1,8 +1,8 @@
 import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
-import { getGcpConnectionData } from 'lib/gcp/gcp';
+import { getGcpConnectionData, getGcpIdentityToken } from 'lib/gcp/gcp';
 import { RequestOptions } from 'types/fetch';
 import { GcpConnectionData } from 'types/gcp';
-import { allPropsNotNullOrUndefined, isDefined } from 'types/guards';
+import { isDefined } from 'types/guards';
 import {
   AppId,
   ConnectionData,
@@ -19,22 +19,29 @@ import { TIME_IN_MILLISECOND } from 'utils/time-enum';
 const logger = new Logger('SecureStorage', { passThrough: false });
 const MIN_TOKEN_EXPIRE_TTL_HOURS = 0.5;
 
-const secureStorageFetch = async <T>(path: string, token: Token, options: RequestOptions) => {
+const secureStorageFetch = async <T>(path: string, connectionData: ConnectionData, options: RequestOptions) => {
   const { method = 'GET', body } = options;
   
   if (!isDefined(path)) {
     throw new BadRequestError('`path` must be provided');
   }
   
+  const { token, identityToken } = connectionData;
+  
   const fetchObj = {
     headers: {
       ...(token && { 'X-Vault-Token': token }),
+      ...(identityToken && { 'Authorization': `Bearer ${identityToken}` })
     },
     method,
     body: body ? JSON.stringify(body) : undefined
   };
   
   const result = await fetchWrapper<VaultBaseResponse>(path, fetchObj);
+  
+  if (!isDefined(result)) {
+    return;
+  }
   
   if (isDefined(result.errors)) {
     logger.debug(`Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`);
@@ -66,7 +73,7 @@ const generateCrudPath = (path: string, id?: AppId) => {
   return fullPath;
 };
 
-const getToken = async (gcpCredentials: GcpConnectionData): Promise<Token> => {
+const getToken = async (gcpCredentials: GcpConnectionData, connectionData: ConnectionData): Promise<Token> => {
   const { secureStorageAddress } = getMondayCodeContext();
   const loginUrl = `${secureStorageAddress}/v1/auth/gcp/login`;
   const body = JSON.stringify({
@@ -74,37 +81,61 @@ const getToken = async (gcpCredentials: GcpConnectionData): Promise<Token> => {
     jwt: gcpCredentials.token
   });
   
-  const loginResponse = await fetchWrapper<VaultGcpLoginResponse>(loginUrl, { method: 'POST', body });
+  const loginResponse = await fetchWrapper<VaultGcpLoginResponse>(loginUrl, {
+    method: 'POST',
+    body,
+    headers: { Authorization: `Bearer ${connectionData.identityToken}` }
+  });
+  
+  if (!isDefined(loginResponse)) {
+    logger.debug('[getToken] invalid gcp login response');
+    throw new InternalServerError('An error occurred while authenticating');
+  }
+  
   const token = loginResponse?.auth?.client_token;
   return token;
 };
 
-const getTokenExpiry = async (token: Token) => {
+const getTokenExpiry = async (connectionData: ConnectionData) => {
   const { secureStorageAddress } = getMondayCodeContext();
   const lookupUrl = `${secureStorageAddress}/v1/auth/token/lookup-self`;
-  const response = await secureStorageFetch<VaultLookupResponse>(lookupUrl, token, { method: 'GET' });
+  const response = await secureStorageFetch<VaultLookupResponse>(lookupUrl, connectionData, { method: 'GET' });
+  if (!isDefined(response)) {
+    throw new InternalServerError('An error occurred while authenticating');
+  }
+  
   return response.expire_time;
 };
 
-const getConnectionData = async (): Promise<ConnectionData> => {
+const getConnectionData = async (connectionData: ConnectionData): Promise<ConnectionData> => {
   const gcpCredentials = await getGcpConnectionData();
-  const token = await getToken(gcpCredentials);
-  const expireTime = await getTokenExpiry(token);
+  connectionData.token = await getToken(gcpCredentials, connectionData);
+  const expireTime = await getTokenExpiry(connectionData);
   
-  return { token, expireTime, id: gcpCredentials.projectId };
+  const { token, identityToken } = connectionData;
+  
+  return { token, expireTime, id: gcpCredentials.projectId, identityToken };
 };
 
 const authenticate = async (connectionData: ConnectionData): Promise<ConnectionData> => {
   validateEnvironment();
-  if (!isDefined(connectionData) || !allPropsNotNullOrUndefined(connectionData)) {
-    return await getConnectionData();
+  if (!isDefined(connectionData)) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    connectionData = {};
   }
   
-  const { expireTime, token, id } = connectionData;
+  connectionData.identityToken = await getGcpIdentityToken(connectionData?.identityToken);
+  
+  if (!isDefined(connectionData.token)) {
+    return await getConnectionData(connectionData);
+  }
+  
+  const { expireTime, token, id, identityToken } = connectionData;
   const tokenTtlInHours = ((new Date(expireTime)).getTime() - (new Date()).getTime()) / TIME_IN_MILLISECOND.HOUR;
   const ttlPassedThreshold = tokenTtlInHours <= MIN_TOKEN_EXPIRE_TTL_HOURS;
   if (ttlPassedThreshold) {
-    return await getConnectionData();
+    return await getConnectionData(connectionData);
   }
   
   if (!isDefined(id)) {
@@ -112,7 +143,7 @@ const authenticate = async (connectionData: ConnectionData): Promise<ConnectionD
     throw new InternalServerError('An issue occurred while accessing secure storage');
   }
   
-  return { token, expireTime, id };
+  return { token, expireTime, id, identityToken };
 };
 
 export class SecureStorage implements ISecureStorageInstance {
@@ -125,7 +156,7 @@ export class SecureStorage implements ISecureStorageInstance {
   async delete(key: string) {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
-    await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData.token, { method: 'DELETE' });
+    await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'DELETE' });
     logger.info(`[SecureStorage] Deleted data for key from secure storage\nkey: ${key}`, { passThrough: true });
     return true;
   }
@@ -133,15 +164,15 @@ export class SecureStorage implements ISecureStorageInstance {
   async get<T>(key: string) {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
-    const result = await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData.token, { method: 'GET' });
+    const result = await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'GET' });
     logger.info(`[SecureStorage] Got data for key from secure storage\nkey: ${key}`, { passThrough: true });
-    return result.data as T;
+    return result?.data as T;
   }
   
   async set<T extends object>(key: string, value: T) {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
-    await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData.token, {
+    await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, {
       method: 'PUT',
       body: { data: value }
     });

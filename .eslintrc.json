@@ -1,4 +1,5 @@
 {
+  "ignorePatterns": ["dist", "node_modules"],
   "extends": [
     "eslint:recommended",
     "plugin:n/recommended",

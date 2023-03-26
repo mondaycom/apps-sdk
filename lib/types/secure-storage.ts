@@ -11,7 +11,8 @@ export type AppId = string;
 export type ConnectionData = {
   token: Token,
   expireTime: ExpireTime,
-  id: AppId
+  id: AppId,
+  identityToken: Token
 }
 
 export type VaultBaseResponse = {
