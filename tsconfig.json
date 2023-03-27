@@ -7,7 +7,7 @@
     "types": [
       "node"
     ],
-    "module": "commonjs",
+    "module": "ESNext",
     "esModuleInterop": true,
     "outDir": "./dist",
     "rootDir": "./lib",

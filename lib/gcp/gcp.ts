@@ -1,10 +1,42 @@
 import { GoogleAuth } from 'google-auth-library';
+import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 
+import { InternalServerError } from 'errors/apps-sdk-error';
 import { GCP_SCOPES, GcpConnectionData, SignJwtResponse } from 'types/gcp';
-import { validateEnvironment } from 'utils/env';
+import { isDefined } from 'types/guards';
+import { Token } from 'types/secure-storage';
+import { getMondayCodeContext, validateEnvironment } from 'utils/env';
 
 const generateJwtSigningUrl = (serviceAccountEmail: string) => `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccountEmail}:signJwt`;
+
+const generateGcpIdentityToken = async (): Promise<Token> => {
+  const { secureStorageAddress } = getMondayCodeContext();
+  const googleAuthClient = new GoogleAuth();
+  const idTokenClient = await googleAuthClient.getIdTokenClient(secureStorageAddress);
+  const identityToken = await idTokenClient.idTokenProvider.fetchIdToken(secureStorageAddress);
+  return identityToken;
+};
+
+export const getGcpIdentityToken = async (identityToken?: Token): Promise<Token> => {
+  if (!isDefined(identityToken)) {
+    return await generateGcpIdentityToken();
+  }
+  
+  const tokenClaims = jwt.decode(identityToken);
+  if (typeof tokenClaims === 'string' || !isDefined(tokenClaims)) {
+    throw new InternalServerError('An error occurred');
+  }
+  
+  const tokenExpiration = tokenClaims.exp as number;
+  const now = new Date();
+  const nowInMilliseconds = now.getTime() / 1000;
+  if (tokenExpiration < nowInMilliseconds) {
+    return await generateGcpIdentityToken();
+  }
+  
+  return identityToken;
+};
 
 export const getGcpConnectionData = async (): Promise<GcpConnectionData> => {
   validateEnvironment();
