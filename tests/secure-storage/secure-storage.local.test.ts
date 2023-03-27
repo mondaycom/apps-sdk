@@ -72,12 +72,18 @@ describe('LocalSecureStorage', () => {
       await expect(localSecureStorage.delete(undefined)).rejects.toThrow();
     });
 
+    it('should delete for valid key', async () => {
+      const mockKeyToDelete = 'deleteMe';
+      MOCK_STORED_DATA[mockKeyToDelete] = MOCK_ENCRYPTED_VALUE;
+      await localSecureStorage.delete(mockKeyToDelete);
+      expect(MOCK_STORED_DATA[mockKeyToDelete]).toBeUndefined();
+    });
+
     it('should not fail for multiple deletions of the same key', async () => {
       const mockKeyToDelete = 'deleteMe';
       MOCK_STORED_DATA[mockKeyToDelete] = MOCK_ENCRYPTED_VALUE;
       await localSecureStorage.delete(mockKeyToDelete);
-      await localSecureStorage.delete(mockKeyToDelete);
-      expect(MOCK_STORED_DATA[mockKeyToDelete]).toBeUndefined();
+      await expect(localSecureStorage.delete(mockKeyToDelete)).resolves.toBeTruthy();
     });
   });
 });
