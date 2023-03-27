@@ -11,7 +11,7 @@ export class Logger {
    * @param tag - Will be added to every logged message
    * @param {Options} options
    */
-  constructor(private tag: string, options: Options) {
+  constructor(private tag: string, options: Options = {}) {
     this.options = { ...defaultOptions, ...options };
   }
   
@@ -26,6 +26,10 @@ export class Logger {
   
   error(message: string, options?: Options) {
     this.logMessage(LogMethods.ERROR, message, options);
+  }
+  
+  warn(message: string, options?: Options) {
+    this.logMessage(LogMethods.WARNING, message, options);
   }
   
   info(message: string, options?: Options) {

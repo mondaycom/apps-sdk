@@ -19,7 +19,7 @@ import { TIME_IN_MILLISECOND } from 'utils/time-enum';
 const logger = new Logger('SecureStorage', { passThrough: false });
 const MIN_TOKEN_EXPIRE_TTL_HOURS = 0.5;
 
-const secureStorageFetch = async <T>(path: string, connectionData: ConnectionData, options: RequestOptions) => {
+const secureStorageFetch = async <T>(path: string, connectionData: ConnectionData, options: RequestOptions): Promise<T | undefined> => {
   const { method = 'GET', body } = options;
   
   if (!isDefined(path)) {
@@ -88,7 +88,7 @@ const getToken = async (gcpCredentials: GcpConnectionData, connectionData: Conne
   });
   
   if (!isDefined(loginResponse)) {
-    logger.debug('[getToken] invalid gcp login response');
+    logger.warn('[getToken] invalid gcp login response');
     throw new InternalServerError('An error occurred while authenticating');
   }
   
