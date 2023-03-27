@@ -5,7 +5,7 @@
       "dom"
     ],
     "types": [
-      "node"
+      "node", "jest"
     ],
     "module": "ESNext",
     "esModuleInterop": true,
@@ -27,9 +27,6 @@
       "lib/*": [
         "./lib/*"
       ],
-      "tests/*": [
-        "./tests/*"
-      ],
       "types/*": [
         "./lib/types/*"
       ],
@@ -45,7 +42,7 @@
     "node_modules",
     ".vscode/**/*",
     "dist",
-    "tests"
+    "tests/**/*"
   ],
   "include": [
     "./lib/**/*"
