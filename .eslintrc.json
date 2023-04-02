@@ -1,5 +1,5 @@
 {
-  "ignorePatterns": ["dist", "node_modules"],
+  "ignorePatterns": ["dist", "node_modules", "jest.config.js"],
   "extends": [
     "eslint:recommended",
     "plugin:n/recommended",
@@ -25,7 +25,7 @@
     }
   },
   "parserOptions": {
-    "project": "./tsconfig.json",
+    "project": "./tsconfig.general.json",
     "ecmaVersion": 12,
     "sourceType": "module"
   },

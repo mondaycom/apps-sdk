@@ -1,3 +1,5 @@
+import { RequestInit } from 'node-fetch';
+
 export type RequestOptions = {
-  body?: BodyInit | object
+  body?: object
 } & Omit<RequestInit, 'body'>
