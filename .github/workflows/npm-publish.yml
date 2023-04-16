@@ -1,9 +1,10 @@
 name: Node.js Package
 
-on:
-  push:
-    branches:
-      - master
+#on:
+#  push:
+#    branches:
+#      - master
+on: pull_request
 
 jobs:
   publish-npm:
@@ -17,7 +18,7 @@ jobs:
       - run: yarn prepublish-and-build
       - run: npm publish --access restricted
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
