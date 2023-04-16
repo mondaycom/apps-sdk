@@ -9,7 +9,7 @@ function makeModuleNameMapper(srcPath, tsconfigPath) {
   // Iterate over paths and convert them into moduleNameMapper format
   Object.keys(paths).forEach(item => {
     const key = `^${item.replace('/*', '/(.*)')}$`;
-    const path = paths[item][0].replace('./lib/', '').replace('/*', '/$1');
+    const path = paths[item][0].replace('./lib/', '').replace('*', '$1');
     aliases[key] = srcPath + '/' + path;
   });
   return aliases;
@@ -22,4 +22,10 @@ module.exports = {
   moduleNameMapper: makeModuleNameMapper(SRC_PATH, TS_CONFIG_PATH),
   preset: 'ts-jest',
   testEnvironment: 'node',
+  clearMocks: true,
+  globals: {
+    'ts-jest': {
+      tsconfig: '<rootDir>/tsconfig.general.json',
+    },
+  },
 };

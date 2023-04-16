@@ -1,19 +1,11 @@
 {
   "compilerOptions": {
-    "lib": [
-      "es2020",
-      "dom"
-    ],
-    "types": [
-      "node", "jest"
-    ],
-    "module": "ESNext",
+    "lib": ["es2020", "esnext", "es5", "es2015", "es2016"],
+    "types": ["node", "jest"],
     "esModuleInterop": true,
-    "outDir": "./dist",
     "rootDir": "./lib",
     "allowJs": true,
-    "target": "es2019",
-    "sourceMap": false,
+    "sourceMap": true,
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "strict": true,
@@ -23,31 +15,14 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
-      "lib/*": [
-        "./lib/*"
-      ],
-      "types/*": [
-        "./lib/types/*"
-      ],
-      "errors/*": [
-        "./lib/errors/*"
-      ],
-      "utils/*": [
-        "./lib/utils/*"
-      ]
+      "lib/*": ["./lib/*"],
+      "types/*": ["./lib/types/*"],
+      "errors/*": ["./lib/errors/*"],
+      "utils/*": ["./lib/utils/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    ".vscode/**/*",
-    "dist",
-    "tests/**/*"
-  ],
-  "include": [
-    "./lib/**/*"
-  ],
-  "ts-node": {
-    "files": true
-  }
+  "exclude": ["node_modules", ".vscode/**/*", ".idea/**/*","dist", "tests"],
+  "include": ["./lib/**/*"]
 }

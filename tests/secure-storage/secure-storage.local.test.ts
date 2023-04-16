@@ -1,19 +1,22 @@
-import { LocalSecureStorage } from '../../lib/secure-storage/secure-storage.local';
-import { encrypt } from '../../lib/utils/cipher';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { LocalSecureStorage } from 'lib/secure-storage/secure-storage.local';
+import { encrypt } from 'utils/cipher';
 
 const MOCK_KEY = 'mock';
 const MOCK_VALUE = { mock: 'mock' };
 const MOCK_ENCRYPTED_VALUE = encrypt(JSON.stringify(MOCK_VALUE));
 const MOCK_STORED_DATA = { [`${MOCK_KEY}`]: MOCK_ENCRYPTED_VALUE };
 
-let mockRead = jest.fn();
-let mockWrite = jest.fn();
+const mockGet = jest.fn();
+const mockSet = jest.fn();
+const mockDelete = jest.fn();
+
 jest.mock('../../lib/utils/local-db', () => ({
   initDb() {
     return {
-      read: mockRead,
-      data: MOCK_STORED_DATA,
-      write: mockWrite,
+      get: mockGet,
+      set: mockSet,
+      delete: mockDelete,
     };
   },
 }));
@@ -43,7 +46,7 @@ describe('LocalSecureStorage', () => {
 
     it('should set data when all is valid', async () => {
       await localSecureStorage.set(MOCK_KEY, MOCK_VALUE);
-      expect(mockWrite).toBeCalled();
+      expect(mockSet).toBeCalled();
     });
   });
 
@@ -55,12 +58,11 @@ describe('LocalSecureStorage', () => {
 
     it('should fail for key without value', async () => {
       const badKey = 'badKey';
-      // @ts-ignore
       await expect(localSecureStorage.get(badKey)).rejects.toThrow();
     });
 
     it('should succeed for key with value', async () => {
-      // @ts-ignore
+      mockGet.mockImplementation(() => MOCK_STORED_DATA[MOCK_KEY]);
       const result = await localSecureStorage.get(MOCK_KEY);
       expect(result).toEqual(MOCK_VALUE);
     });
@@ -74,14 +76,12 @@ describe('LocalSecureStorage', () => {
 
     it('should delete for valid key', async () => {
       const mockKeyToDelete = 'deleteMe';
-      MOCK_STORED_DATA[mockKeyToDelete] = MOCK_ENCRYPTED_VALUE;
       await localSecureStorage.delete(mockKeyToDelete);
-      expect(MOCK_STORED_DATA[mockKeyToDelete]).toBeUndefined();
+      expect(mockDelete).toBeCalledWith(mockKeyToDelete);
     });
 
     it('should not fail for multiple deletions of the same key', async () => {
       const mockKeyToDelete = 'deleteMe';
-      MOCK_STORED_DATA[mockKeyToDelete] = MOCK_ENCRYPTED_VALUE;
       await localSecureStorage.delete(mockKeyToDelete);
       await expect(localSecureStorage.delete(mockKeyToDelete)).resolves.toBeTruthy();
     });

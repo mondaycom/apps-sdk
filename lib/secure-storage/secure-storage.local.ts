@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
-
 import { BadRequestError, NotFoundError } from 'errors/apps-sdk-error';
 import { isDefined } from 'types/guards';
 import { ISecureStorageInstance } from 'types/secure-storage';
+import { ILocalStorageInstance } from 'types/secure-storage.local';
 import { decrypt, encrypt } from 'utils/cipher';
 import { initDb } from 'utils/local-db';
 
@@ -13,31 +12,25 @@ const validateKey = (key: string) => {
 };
 
 export class LocalSecureStorage implements ISecureStorageInstance {
-  private db;
+  private db: ILocalStorageInstance;
   
-  private async init() {
-    if (!isDefined(this.db)) {
-      this.db = await initDb('local-secure-storage.db');
-    }
+  constructor() {
+    this.db = initDb('local-secure-storage.db');
   }
   
   async delete(key: string) {
     validateKey(key);
-    await this.init();
-    delete this.db.data[key];
-    await this.db.write();
+    await this.db.delete(key);
     return true;
   }
   
   async get<T>(key: string) {
     validateKey(key);
-    await this.init();
-    const encryptedValue = this.db.data[key] as string;
+    const encryptedValue = await this.db.get<string>(key);
     if (!isDefined(encryptedValue)) {
       throw new NotFoundError(`No data found for ${key}`);
     }
     
-    console.log(encryptedValue);
     const stringifiedValue = decrypt(encryptedValue);
     return JSON.parse(stringifiedValue) as T;
   }
@@ -48,11 +41,9 @@ export class LocalSecureStorage implements ISecureStorageInstance {
     }
     
     validateKey(key);
-    await this.init();
     const stringifiedValue = JSON.stringify(value);
     const encryptedValue = encrypt(stringifiedValue);
-    this.db.data[key] = encryptedValue;
-    this.db.write();
+    await this.db.set(key, encryptedValue);
     return true;
   }
 }
