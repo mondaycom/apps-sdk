@@ -124,6 +124,6 @@ export const initDb = (dbName = DEFAULT_DB_NAME) => {
     return new LocalDb(dbName);
   }
   
-  logger.info('No disk access, initializing in memory db');
+  logger.warn('No disk access, initializing in memory db (not data persistence)');
   return new LocalMemoryDb();
 };
