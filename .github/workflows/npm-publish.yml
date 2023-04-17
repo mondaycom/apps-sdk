@@ -18,7 +18,7 @@ jobs:
       - run: yarn prepublish-and-build
       - run: npm publish  --access public --verbose
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN_PUBLISH}}
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
