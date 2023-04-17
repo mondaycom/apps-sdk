@@ -16,7 +16,7 @@ jobs:
           node-version: 18.12.1
           registry-url: https://registry.npmjs.org/
       - run: yarn prepublish-and-build
-      - run: npm publish  --access public --verbose
+      - run: npm publish  --access restricted
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - uses: "marvinpinto/action-automatic-releases@latest"
