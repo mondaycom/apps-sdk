@@ -2,12 +2,23 @@ import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
 import { RequestOptions } from 'types/fetch';
 import { isDefined } from 'types/guards';
 import { IStorageInstance, Options, SetResponse, Token } from 'types/storage';
+import { isDevelopmentEnvironment } from 'utils/env';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 
 const logger = new Logger('Storage', { passThrough: false });
 const LOGGER_TAG = 'Storage';
-const STORAGE_URL = 'https://apps-storage.monday.com/app_storage_api/v2';
+
+const getStorageUrl = () => {
+  const productionUrl = 'https://apps-storage.monday.com/app_storage_api/v2';
+  const developmentUrl = 'http://apps-storage.llama.fan/app_storage_api/v2';
+  
+  if (isDevelopmentEnvironment()) {
+    return developmentUrl;
+  }
+  
+  return productionUrl;
+};
 
 const getToken = (token?: Token, options: Options = {}): Token => {
   const selectedToken = options.token || token;
@@ -24,7 +35,8 @@ const generateCrudPath = (key: string) => {
     throw new BadRequestError('Missing key');
   }
   
-  const fullPath = `${STORAGE_URL}/${key}`;
+  const storageUrl = getStorageUrl();
+  const fullPath = `${storageUrl}/${key}`;
   return fullPath;
 };
 
