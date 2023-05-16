@@ -1,7 +1,12 @@
 import { Token } from 'types/secure-storage';
 
 export type SignJwtResponse = {
-  signedJwt: Token
+  signedJwt: Token,
+  error?: {
+    code: number,
+    message: string,
+    status: string
+  }
 }
 
 export type GcpConnectionData = {

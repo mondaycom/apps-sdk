@@ -11,6 +11,7 @@ import {
   VaultBaseResponse,
   VaultGcpLoginResponse, VaultLookupResponse
 } from 'types/secure-storage';
+import { isObject } from 'utils/checks';
 import { getMondayCodeContext, validateEnvironment } from 'utils/env';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
@@ -30,6 +31,7 @@ const secureStorageFetch = async <T>(path: string, connectionData: ConnectionDat
   
   const fetchObj = {
     headers: {
+      'Content-Type': 'application/json',
       ...(token && { 'X-Vault-Token': token }),
       ...(identityToken && { 'Authorization': `Bearer ${identityToken}` })
     },
@@ -172,9 +174,10 @@ export class SecureStorage implements ISecureStorageInstance {
   async set<T extends object>(key: string, value: T) {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
+    const formalizedValue = isObject(value) ? value : { value };
     await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, {
       method: 'PUT',
-      body: { data: value }
+      body: { data: formalizedValue }
     });
     logger.info(`[SecureStorage] Set data for key in secure storage\nkey: ${key}`, { passThrough: true });
     return true;

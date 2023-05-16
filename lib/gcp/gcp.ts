@@ -7,6 +7,9 @@ import { GCP_SCOPES, GcpConnectionData, SignJwtResponse } from 'types/gcp';
 import { isDefined } from 'types/guards';
 import { Token } from 'types/secure-storage';
 import { getMondayCodeContext, validateEnvironment } from 'utils/env';
+import { Logger } from 'utils/logger';
+
+const logger = new Logger('SecureStorage', { passThrough: false });
 
 const generateJwtSigningUrl = (serviceAccountEmail: string) => `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccountEmail}:signJwt`;
 
@@ -38,6 +41,13 @@ export const getGcpIdentityToken = async (identityToken?: Token): Promise<Token>
   return identityToken;
 };
 
+const validateGcpResponse = (response: SignJwtResponse): void => {
+  if (response.error) {
+    logger.error(JSON.stringify(response.error));
+    throw new InternalServerError('some thing went wrong when when communicating with secure storage');
+  }
+};
+
 export const getGcpConnectionData = async (): Promise<GcpConnectionData> => {
   validateEnvironment();
   
@@ -46,11 +56,9 @@ export const getGcpConnectionData = async (): Promise<GcpConnectionData> => {
   const projectId = await auth.getProjectId();
   const serviceAccountEmail = (await auth.getCredentials()).client_email as string;
   const accessToken = await auth.getAccessToken() as string;
-  
   const issueTimeInSeconds = Math.floor(Date.now() / 1000);
   // vault will only accept tokens that are good for less than 900 seconds.
   const expirationInSeconds = issueTimeInSeconds + 899;
-  
   const payload = JSON.stringify({
     sub: serviceAccountEmail,
     aud: `vault/${projectId}`,
@@ -68,8 +76,9 @@ export const getGcpConnectionData = async (): Promise<GcpConnectionData> => {
       }
     }
   );
-  const responseJson = await response.json() as SignJwtResponse;
-  const signedToken = responseJson.signedJwt;
   
+  const responseJson = await response.json() as SignJwtResponse;
+  validateGcpResponse(responseJson);
+  const signedToken = responseJson.signedJwt;
   return { token: signedToken, projectId, serviceAccountEmail };
 };
