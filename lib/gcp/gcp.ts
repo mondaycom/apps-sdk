@@ -9,7 +9,7 @@ import { Token } from 'types/secure-storage';
 import { getMondayCodeContext, validateEnvironment } from 'utils/env';
 import { Logger } from 'utils/logger';
 
-const logger = new Logger('SecureStorage', { passThrough: false });
+const logger = new Logger('SecureStorage', { mondayInternal: true });
 
 const generateJwtSigningUrl = (serviceAccountEmail: string) => `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccountEmail}:signJwt`;
 

@@ -18,7 +18,7 @@ import { Logger } from 'utils/logger';
 
 const DEFAULT_DB_NAME = 'storage';
 
-const logger = new Logger('LocalDb', { passThrough: true });
+const logger = new Logger('LocalDb', { mondayInternal: false });
 
 const getDbPath = (dbName: string) => join(appRoot.toString(), `${dbName}.json`);
 

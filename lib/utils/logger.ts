@@ -1,7 +1,7 @@
 import { LogMethods, Options } from 'types/logger';
 
 const defaultOptions: Options = {
-  passThrough: false
+  mondayInternal: true
 };
 
 export class Logger {
