@@ -11,7 +11,6 @@ import {
   VaultBaseResponse,
   VaultGcpLoginResponse, VaultLookupResponse
 } from 'types/secure-storage';
-import { isObject } from 'utils/checks';
 import { getMondayCodeContext, validateEnvironment } from 'utils/env';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
@@ -174,7 +173,7 @@ export class SecureStorage implements ISecureStorageInstance {
   async set<T extends object>(key: string, value: T) {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
-    const formalizedValue = isObject(value) ? value : { value };
+    const formalizedValue = { value };
     await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, {
       method: 'PUT',
       body: { data: formalizedValue }
