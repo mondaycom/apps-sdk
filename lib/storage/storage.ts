@@ -6,7 +6,7 @@ import { isDevelopmentEnvironment } from 'utils/env';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 
-const logger = new Logger('Storage', { passThrough: false });
+const logger = new Logger('Storage', { mondayInternal: true });
 const LOGGER_TAG = 'Storage';
 
 const getStorageUrl = () => {
@@ -69,13 +69,13 @@ export class Storage implements IStorageInstance {
   
   async delete(key: string, options: Options = {}) {
     await storageFetch(key, this.token, options, { method: 'DELETE' });
-    logger.info(`[${LOGGER_TAG}] Deleted data for key from storage\nkey: ${key}`, { passThrough: true });
+    logger.info(`[${LOGGER_TAG}] Deleted data for key from storage\nkey: ${key}`, { mondayInternal: false });
     return true;
   }
   
   async get<T>(key: string, options: Options = {}) {
     const result = await storageFetch<T>(key, this.token, options, { method: 'GET' });
-    logger.info(`[${LOGGER_TAG}] Got data for key from storage\nkey: ${key}`, { passThrough: true });
+    logger.info(`[${LOGGER_TAG}] Got data for key from storage\nkey: ${key}`, { mondayInternal: false });
     return result;
   }
   
@@ -91,7 +91,7 @@ export class Storage implements IStorageInstance {
       }
     });
     
-    logger.info(`[${LOGGER_TAG}] Set data for key in storage\nkey: ${key}`, { passThrough: true });
+    logger.info(`[${LOGGER_TAG}] Set data for key in storage\nkey: ${key}`, { mondayInternal: false });
     const { version } = result;
     return { version };
   }

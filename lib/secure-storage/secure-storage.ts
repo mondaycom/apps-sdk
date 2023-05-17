@@ -16,7 +16,7 @@ import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 import { TIME_IN_MILLISECOND } from 'utils/time-enum';
 
-const logger = new Logger('SecureStorage', { passThrough: false });
+const logger = new Logger('SecureStorage', { mondayInternal: true });
 const MIN_TOKEN_EXPIRE_TTL_HOURS = 0.5;
 
 const secureStorageFetch = async <T>(path: string, connectionData: ConnectionData, options: RequestOptions): Promise<T | undefined> => {
@@ -30,6 +30,7 @@ const secureStorageFetch = async <T>(path: string, connectionData: ConnectionDat
   
   const fetchObj = {
     headers: {
+      'Content-Type': 'application/json',
       ...(token && { 'X-Vault-Token': token }),
       ...(identityToken && { 'Authorization': `Bearer ${identityToken}` })
     },
@@ -157,7 +158,7 @@ export class SecureStorage implements ISecureStorageInstance {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
     await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'DELETE' });
-    logger.info(`[SecureStorage] Deleted data for key from secure storage\nkey: ${key}`, { passThrough: true });
+    logger.info(`[SecureStorage] Deleted data for key from secure storage\nkey: ${key}`, { mondayInternal: false });
     return true;
   }
   
@@ -165,18 +166,19 @@ export class SecureStorage implements ISecureStorageInstance {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
     const result = await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'GET' });
-    logger.info(`[SecureStorage] Got data for key from secure storage\nkey: ${key}`, { passThrough: true });
+    logger.info(`[SecureStorage] Got data for key from secure storage\nkey: ${key}`, { mondayInternal: false });
     return result?.data as T;
   }
   
   async set<T extends object>(key: string, value: T) {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
+    const formalizedValue = { value };
     await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, {
       method: 'PUT',
-      body: { data: value }
+      body: { data: formalizedValue }
     });
-    logger.info(`[SecureStorage] Set data for key in secure storage\nkey: ${key}`, { passThrough: true });
+    logger.info(`[SecureStorage] Set data for key in secure storage\nkey: ${key}`, { mondayInternal: false });
     return true;
   }
 }
