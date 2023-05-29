@@ -23,7 +23,7 @@ This sdk is used to leverage some of the capabilities exposed via `<monday-code 
 ## Storage
 - This is the way to store customer data for your app
 - ***key/value*** based where the ***key*** is a `string` and ***value*** can be `any serializable type` (object, number, string, etc.)
-- ***compartmentalized*** based on **accountId** for your specific app which means that data stored for one account will not be accessible from the context of another account
+- ***compartmentalized*** based on **accountId** and **app** for your specific app which means that data stored for one account will not be accessible from the context of another account
 
 ### Storage API
 There are three methods exposed to manage the storage - `set`, `get` and `delete`
@@ -62,7 +62,7 @@ await storage.delete(key)
 - Has 3 different modes (dependent on where it is used)
   - `Secure storage` - when used in a deployed `<monday-code/>` project it will automatically utilize the **real** secure storage
   - `Local "secure storage"` - a local mock db which will mimic the api exposed by the real secure storage. Will work in this mode when sdk is used locally.
-  - `In memory "secure storage"` - an in memory mock db. Will work in this mode when the sdk is used locally and there are no permissions to write files on the disk. 
+    > If there are no permissions to write files on the disk, Local "secure storage" will not be persisted 
 - ***key/value*** based where the ***key*** is a `string` and ***value*** can be `any type` (object, number, string, etc.)
 - ***compartmentalized*** for your **specific app** which means that data stored for one app will not be accessible by other apps
 
@@ -79,7 +79,7 @@ const secureStorage = new SecureStorage();
 
 #### Set
 - `key: string` - key to store the content for
-- `value: any` - value to store
+- `value: any` - value to store (must be serializable)
 
 ```typescript
 await secureStorage.set(key, value);
