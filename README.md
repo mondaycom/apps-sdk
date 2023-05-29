@@ -22,7 +22,7 @@ This sdk is used to leverage some of the capabilities exposed via `<monday-code 
 
 ## Storage
 - This is the way to store customer data for your app
-- ***key/value*** based where the ***key*** is a `string` and ***value*** can be `any type` (object, number, string, etc.)
+- ***key/value*** based where the ***key*** is a `string` and ***value*** can be `any serializable type` (object, number, string, etc.)
 - ***compartmentalized*** based on **accountId** for your specific app which means that data stored for one account will not be accessible from the context of another account
 
 ### Storage API
