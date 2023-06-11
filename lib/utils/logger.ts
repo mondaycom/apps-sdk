@@ -17,7 +17,7 @@ export class Logger {
   
   private logMessage(method: LogMethods, message: string, options?: Options) {
     const logOptions = { ...this.options, ...options };
-    console[method]({ tag: this.tag, message, ...logOptions });
+    console[method](JSON.stringify({ tag: this.tag, message, ...logOptions }));
   }
   
   debug(message: string, options?: Options) {
