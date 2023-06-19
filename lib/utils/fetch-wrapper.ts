@@ -1,12 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 import fetch, { RequestInit, Response } from 'node-fetch';
 
-import { ForbiddenError, NotFoundError } from 'errors/apps-sdk-error';
+import { ForbiddenError } from 'errors/apps-sdk-error';
 
 const handleFetchErrors = (response: Response): void => {
-  if (response.status == StatusCodes.NOT_FOUND) {
-    throw new NotFoundError('Resource not found');
-  } else if (response.status == StatusCodes.FORBIDDEN) {
+  if (response.status == StatusCodes.FORBIDDEN) {
     throw new ForbiddenError('Forbidden action');
   }
 };
@@ -17,7 +15,7 @@ export async function fetchWrapper<TResponse>(
 ): Promise<TResponse | undefined> {
   const response = await fetch(url, config);
   handleFetchErrors(response);
-  if (response.status === StatusCodes.NO_CONTENT) {
+  if ([StatusCodes.NO_CONTENT, StatusCodes.NOT_FOUND].includes(response.status)) {
     return;
   }
   
