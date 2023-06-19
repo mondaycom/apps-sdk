@@ -1,6 +1,6 @@
 export type ISecureStorageInstance = {
   set: <T extends object>(key: string, value: T) => Promise<boolean>
-  get: <T extends object>(key: string) => Promise<T>
+  get: <T extends object>(key: string) => Promise<T | null>
   delete: (key: string) => Promise<boolean>
 }
 

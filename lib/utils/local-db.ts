@@ -11,7 +11,7 @@ import { join } from 'node:path';
 
 import appRoot from 'app-root-path';
 
-import { InternalServerError, NotFoundError } from 'errors/apps-sdk-error';
+import { InternalServerError } from 'errors/apps-sdk-error';
 import { isDefined } from 'types/guards';
 import { ILocalStorageInstance } from 'types/secure-storage.local';
 import { Logger } from 'utils/logger';
@@ -44,22 +44,22 @@ export const deleteDb = (dbName = DEFAULT_DB_NAME): void => {
 const inMemoryData: Record<string, any> = {};
 
 export class LocalMemoryDb implements ILocalStorageInstance {
-  async set<T>(key: string, value: T): Promise<boolean> {
+  async set<T>(key: string, value: T) {
     inMemoryData[key] = value;
     return Promise.resolve(true);
   }
   
-  async delete(key: string): Promise<boolean> {
+  async delete(key: string) {
     delete inMemoryData[key];
     return Promise.resolve(true);
   }
   
-  async get<T>(key: string): Promise<T> {
+  async get<T>(key: string) {
     if (key in inMemoryData) {
       return Promise.resolve(inMemoryData[key] as T);
     }
     
-    throw new NotFoundError(`Data not found for '${key}'`);
+    return null;
   }
 }
 
@@ -88,21 +88,21 @@ export class LocalDb implements ILocalStorageInstance {
     this.memoryData = {};
   }
   
-  async set<T>(key: string, value: T): Promise<boolean> {
+  async set<T>(key: string, value: T) {
     this.memoryData[key] = value;
     
     writeFileSync(this.dbFilePath, JSON.stringify(this.memoryData));
     return Promise.resolve(true);
   }
   
-  async delete(key: string): Promise<boolean> {
+  async delete(key: string) {
     delete this.memoryData[key];
     
     writeFileSync(this.dbFilePath, JSON.stringify(this.memoryData));
     return Promise.resolve(true);
   }
   
-  async get<T>(key: string): Promise<T> {
+  async get<T>(key: string) {
     if (key in this.memoryData) {
       return Promise.resolve(this.memoryData[key] as T);
     }
@@ -114,7 +114,7 @@ export class LocalDb implements ILocalStorageInstance {
       return Promise.resolve(this.memoryData[key] as T);
     }
     
-    throw new NotFoundError(`Data not found for '${key}'`);
+    return null;
   }
 }
 

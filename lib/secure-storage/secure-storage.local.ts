@@ -1,4 +1,4 @@
-import { BadRequestError, NotFoundError } from 'errors/apps-sdk-error';
+import { BadRequestError } from 'errors/apps-sdk-error';
 import { isDefined } from 'types/guards';
 import { ISecureStorageInstance } from 'types/secure-storage';
 import { ILocalStorageInstance } from 'types/secure-storage.local';
@@ -28,7 +28,7 @@ export class LocalSecureStorage implements ISecureStorageInstance {
     validateKey(key);
     const encryptedValue = await this.db.get<string>(key);
     if (!isDefined(encryptedValue)) {
-      throw new NotFoundError(`No data found for ${key}`);
+      return null;
     }
     
     const stringifiedValue = decrypt(encryptedValue);

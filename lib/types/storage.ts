@@ -11,6 +11,6 @@ export type SetResponse = {
 
 export type IStorageInstance = {
   set: <T extends object>(key: string, value: T, options?: Options) => Promise<SetResponse>
-  get: <T extends object>(key: string, options?: Options) => Promise<T>
+  get: <T extends object>(key: string, options?: Options) => Promise<T | null>
   delete: (key: string, options?: Options) => Promise<boolean>
 }
