@@ -56,9 +56,10 @@ describe('LocalSecureStorage', () => {
       await expect(localSecureStorage.get(undefined)).rejects.toThrow();
     });
 
-    it('should fail for key without value', async () => {
+    it('should return null for key without value', async () => {
       const badKey = 'badKey';
-      await expect(localSecureStorage.get(badKey)).rejects.toThrow();
+      const response = await localSecureStorage.get(badKey);
+      expect(response).toEqual(null);
     });
 
     it('should succeed for key with value', async () => {

@@ -87,8 +87,9 @@ describe('local-db', () => {
     });
 
     describe('get', () => {
-      it('should fail for a key without value', async () => {
-        await expect(localMemoryDb.get(MOCK_KEY)).rejects.toThrow();
+      it('should return null for a key without value', async () => {
+        const response = await localMemoryDb.get(MOCK_KEY);
+        expect(response).toEqual(null);
       });
 
       it('should work of a key with value', async () => {
@@ -185,8 +186,9 @@ describe('local-db', () => {
           expect(readFileSync).toBeCalledTimes(2);
         });
 
-        it('should throw an error if data does not exist for key', async () => {
-          await expect(localDbInstance.get('doesNotExist')).rejects.toThrow();
+        it('should return null if data does not exist for key', async () => {
+          const response = await localDbInstance.get('doesNotExist');
+          expect(response).toEqual(null);
         });
       });
     });

@@ -2,22 +2,14 @@ import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
 import { RequestOptions } from 'types/fetch';
 import { isDefined } from 'types/guards';
 import { IStorageInstance, Options, SetResponse, Token } from 'types/storage';
-import { isDevelopmentEnvironment } from 'utils/env';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 
 const logger = new Logger('Storage', { mondayInternal: true });
-const LOGGER_TAG = 'Storage';
 
 const getStorageUrl = () => {
-  const productionUrl = 'https://apps-storage.monday.com/app_storage_api/v2';
-  const developmentUrl = 'http://apps-storage.llama.fan/app_storage_api/v2';
-  
-  if (isDevelopmentEnvironment()) {
-    return developmentUrl;
-  }
-  
-  return productionUrl;
+  const url = process.env.STORAGE_URL || 'https://apps-storage.monday.com/app_storage_api/v2';
+  return url;
 };
 
 const getToken = (token?: Token, options: Options = {}): Token => {
@@ -54,11 +46,17 @@ const storageFetch = async <T>(key: string, initToken: Token | undefined, extern
     'Content-Type': 'application/json'
   };
   
-  const response = await fetchWrapper<T>(url, {
-    method,
-    headers,
-    ...(body && { body: stringifiedBody })
-  });
+  let response: T | undefined;
+  try {
+    response = await fetchWrapper<T>(url, {
+      method,
+      headers,
+      ...(body && { body: stringifiedBody })
+    });
+  } catch (error: unknown) {
+    logger.debug('[storageFetch] Unexpected error occurred while communicating with storage', { error: error as Error });
+    throw new InternalServerError('An issue occurred while accessing storage');
+  }
   
   return response as T;
 };
@@ -69,13 +67,17 @@ export class Storage implements IStorageInstance {
   
   async delete(key: string, options: Options = {}) {
     await storageFetch(key, this.token, options, { method: 'DELETE' });
-    logger.info(`[${LOGGER_TAG}] Deleted data for key from storage\nkey: ${key}`, { mondayInternal: false });
+    logger.info(`[Storage.delete] Deleted data for key from storage\nkey: ${key}`, { mondayInternal: false });
     return true;
   }
   
   async get<T>(key: string, options: Options = {}) {
     const result = await storageFetch<T>(key, this.token, options, { method: 'GET' });
-    logger.info(`[${LOGGER_TAG}] Got data for key from storage\nkey: ${key}`, { mondayInternal: false });
+    logger.info(`[Storage.get] Got data for key from storage\nkey: ${key}`, { mondayInternal: false });
+    if (!isDefined(result)) {
+      return null;
+    }
+    
     return result;
   }
   
@@ -91,7 +93,7 @@ export class Storage implements IStorageInstance {
       }
     });
     
-    logger.info(`[${LOGGER_TAG}] Set data for key in storage\nkey: ${key}`, { mondayInternal: false });
+    logger.info(`[Storage.set] Set data for key in storage\nkey: ${key}`, { mondayInternal: false });
     const { version } = result;
     return { version };
   }

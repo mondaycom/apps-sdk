@@ -1,6 +1,6 @@
 {
   "name": "@mondaycom/apps-sdk",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "monday apps SDK for NodeJS",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -62,6 +62,7 @@
   },
   "dependencies": {
     "app-root-path": "^3.1.0",
+    "dotenv": "^16.3.1",
     "google-auth-library": "^8.7.0",
     "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^9.0.0",

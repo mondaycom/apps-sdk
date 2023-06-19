@@ -38,14 +38,20 @@ const secureStorageFetch = async <T>(path: string, connectionData: ConnectionDat
     body: body ? JSON.stringify(body) : undefined
   };
   
-  const result = await fetchWrapper<VaultBaseResponse>(path, fetchObj);
+  let result: VaultBaseResponse | undefined;
+  try {
+    result = await fetchWrapper<VaultBaseResponse>(path, fetchObj);
+  } catch (error: unknown) {
+    logger.debug('[secureStorageFetch] Unexpected error occurred while communicating with secure storage', { error: error as Error });
+    throw new InternalServerError('An issue occurred while accessing secure storage');
+  }
   
   if (!isDefined(result)) {
     return;
   }
   
   if (isDefined(result.errors)) {
-    logger.debug(`Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`);
+    logger.debug(`[secureStorageFetch] Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`);
     throw new BadRequestError('Provided input is invalid');
   }
   
@@ -167,6 +173,10 @@ export class SecureStorage implements ISecureStorageInstance {
     const fullPath = generateCrudPath(key, this.connectionData.id);
     const result = await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'GET' });
     logger.info(`[SecureStorage] Got data for key from secure storage\nkey: ${key}`, { mondayInternal: false });
+    if (!isDefined(result?.data)) {
+      return null;
+    }
+    
     return result?.data as T;
   }
   
