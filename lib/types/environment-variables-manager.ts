@@ -13,5 +13,5 @@ export type EnvironmentData = Record<string, JsonValue>
 export type IEnvironmentVariablesManager = {
   getKeys(_options?: GetOptions): Array<string>;
   
-  get<T extends JsonValue>(_key: string, _options?: GetOptions): T;
+  get(_key: string, _options?: GetOptions): JsonValue;
 }

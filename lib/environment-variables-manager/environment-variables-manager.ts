@@ -2,7 +2,12 @@ import fs from 'fs';
 import * as process from 'process';
 
 import { JsonValue } from 'lib/types/general';
-import { EnvironmentData, GetOptions, IEnvironmentVariablesManager, Options } from 'types/environment-vriable-manager';
+import {
+  EnvironmentData,
+  GetOptions,
+  IEnvironmentVariablesManager,
+  Options
+} from 'types/environment-variables-manager';
 import { isDefined } from 'types/guards';
 import { isDevelopmentEnvironment } from 'utils/env';
 import { Logger } from 'utils/logger';
@@ -13,13 +18,15 @@ const logger = new Logger('EnvironmentVariablesManager', { mondayInternal: true 
 const readEnvironmentData = () => {
   const environmentDataFileName = process?.env?.SECRET_NAME;
   if (!isDefined(environmentDataFileName)) {
-    throw new Error('Environment file name is not defined');
+    logger.error('[EnvironmentVariablesManager] Environment file name is not defined');
+    return;
   }
   
   const environmentDataFilePath = `/secrets/${environmentDataFileName}`;
   const isEnvironmentFileExists = fs.existsSync(environmentDataFileName);
   if (!isEnvironmentFileExists) {
-    throw new Error('Environment file does not exists in path');
+    logger.error('[EnvironmentVariablesManager] Environment file does not exist in path');
+    return;
   }
   
   const environmentData = fs.readFileSync(environmentDataFilePath, 'utf8');
@@ -27,11 +34,10 @@ const readEnvironmentData = () => {
 };
 
 export class EnvironmentVariablesManager implements IEnvironmentVariablesManager {
-  private cachedEnvironmentData: EnvironmentData;
+  private cachedEnvironmentData?: EnvironmentData;
   private shouldUpdateProcessEnv: boolean;
   
   constructor(options: Options) {
-    this.cachedEnvironmentData = {};
     this.shouldUpdateProcessEnv = !!options.updateProcessEnv;
     this.initEnv(options);
   }
@@ -44,7 +50,7 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
   
   private initEnv(options: Options = {}) {
     if (isDevelopmentEnvironment()) {
-      logger.info('[EnvironmentVariablesManager.initEnv] Running in development environment, skipping init', { mondayInternal: false });
+      logger.info('[EnvironmentVariablesManager] Running in development environment, skipping init', { mondayInternal: false });
       this.cachedEnvironmentData = process.env as EnvironmentData;
       return;
     }
@@ -52,6 +58,9 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
     const { updateProcessEnv } = options;
     this.shouldUpdateProcessEnv = updateProcessEnv ?? this.shouldUpdateProcessEnv;
     this.cachedEnvironmentData = readEnvironmentData();
+    if (!isDefined(this.cachedEnvironmentData)) {
+      return;
+    }
     
     if (this.shouldUpdateProcessEnv) {
       Object.entries(this.cachedEnvironmentData).forEach(([key, value]) => {
@@ -60,17 +69,27 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
       });
     }
     
-    logger.info('[EnvironmentVariablesManager.initEnv] Initialized environment variables data', { mondayInternal: false });
+    logger.info('[EnvironmentVariablesManager] Initialized environment variables data', { mondayInternal: false });
   }
   
   getKeys(options?: GetOptions): Array<string> {
     this.initEnvIfNeeded(options);
+    if (!isDefined(this.cachedEnvironmentData)) {
+      logger.error('[EnvironmentVariablesManager.getKeys] There is an issue with loading keys', { mondayInternal: false });
+      return [];
+    }
+    
     return Object.keys(this.cachedEnvironmentData);
   }
   
   // TODO - DOR - Validate this works for complex types
-  get<T extends JsonValue>(key: string, options?: GetOptions): T {
+  get(key: string, options?: GetOptions): JsonValue {
     this.initEnvIfNeeded(options);
-    return this.cachedEnvironmentData[key] as T;
+    if (!isDefined(this.cachedEnvironmentData)) {
+      logger.error('[EnvironmentVariablesManager.get] There is an issue with loading data for key', { mondayInternal: false });
+      return null;
+    }
+    
+    return this.cachedEnvironmentData[key];
   }
 }
