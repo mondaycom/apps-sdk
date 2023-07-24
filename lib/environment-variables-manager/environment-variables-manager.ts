@@ -23,7 +23,7 @@ const readEnvironmentData = () => {
   }
   
   const environmentDataFilePath = `/secrets/${environmentDataFileName}`;
-  const isEnvironmentFileExists = fs.existsSync(environmentDataFileName);
+  const isEnvironmentFileExists = fs.existsSync(environmentDataFilePath);
   if (!isEnvironmentFileExists) {
     logger.error('[EnvironmentVariablesManager] Environment file does not exist in path');
     return;
