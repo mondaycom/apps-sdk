@@ -30,20 +30,25 @@ const readEnvironmentData = () => {
   }
   
   const environmentData = fs.readFileSync(environmentDataFilePath, 'utf8');
-  return JSON.parse(environmentData) as EnvironmentData;
+  try {
+    return JSON.parse(environmentData) as EnvironmentData;
+  } catch (error) {
+    logger.error('[EnvironmentVariablesManager] Corrupted Environment file. File is not in JSON format');
+    return;
+  }
 };
 
 export class EnvironmentVariablesManager implements IEnvironmentVariablesManager {
   private cachedEnvironmentData?: EnvironmentData;
   private shouldUpdateProcessEnv: boolean;
   
-  constructor(options: Options) {
-    this.shouldUpdateProcessEnv = !!options.updateProcessEnv;
+  constructor(options?: Options) {
+    this.shouldUpdateProcessEnv = !!options?.updateProcessEnv;
     this.initEnv(options);
   }
   
   private initEnvIfNeeded(options?: GetOptions) {
-    if (options?.invalidateCache || !this.cachedEnvironmentData) {
+    if (options?.invalidate || !this.cachedEnvironmentData) {
       this.initEnv();
     }
   }
@@ -82,7 +87,6 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
     return Object.keys(this.cachedEnvironmentData);
   }
   
-  // TODO - DOR - Validate this works for complex types
   get(key: string, options?: GetOptions): JsonValue {
     this.initEnvIfNeeded(options);
     if (!isDefined(this.cachedEnvironmentData)) {

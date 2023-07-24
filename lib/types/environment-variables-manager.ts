@@ -5,7 +5,7 @@ export type Options = {
 }
 
 export type GetOptions = {
-  invalidateCache?: boolean
+  invalidate?: boolean
 }
 
 export type EnvironmentData = Record<string, JsonValue>
