@@ -5,10 +5,10 @@ export type Options = {
 }
 
 export enum LogMethods {
-  INFO = 'info',
-  ERROR = 'error',
-  DEBUG = 'debug',
-  WARNING = 'warn'
+  INFO = 'INFO',
+  ERROR = 'ERROR',
+  DEBUG = 'DEBUG',
+  WARNING = 'WARNING'
 }
 
 console.warn();
