@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { LocalSecureStorage } from 'lib/secure-storage/secure-storage.local';
-import { encrypt } from 'utils/cipher';
+import * as encryptionService from 'utils/cipher';
 
 const MOCK_KEY = 'mock';
 const MOCK_VALUE = { mock: 'mock' };
-const MOCK_ENCRYPTED_VALUE = encrypt(JSON.stringify(MOCK_VALUE));
+const MOCK_ENCRYPTED_VALUE = encryptionService.encrypt(JSON.stringify(MOCK_VALUE));
 const MOCK_STORED_DATA = { [`${MOCK_KEY}`]: MOCK_ENCRYPTED_VALUE };
 
 const mockGet = jest.fn();
@@ -29,14 +29,21 @@ describe('LocalSecureStorage', () => {
   });
 
   describe('set', () => {
-    it('should fail for undefined value', async () => {
+    it('should not fail for undefined value', async () => {
+      const encryptSpy = jest.spyOn(encryptionService, 'encrypt');
       // @ts-ignore
-      await expect(localSecureStorage.set(MOCK_KEY, undefined)).rejects.toThrow();
+      await localSecureStorage.set(MOCK_KEY, undefined);
+
+      expect(encryptSpy).toBeCalledWith(JSON.stringify({ value: undefined }));
     });
 
-    it('should fail for value which is not an object', async () => {
-      // @ts-ignore
-      await expect(localSecureStorage.set(MOCK_KEY, 'not an object')).rejects.toThrow();
+    it('should store a value which is not an object as an object with the key `value`', async () => {
+      const encryptSpy = jest.spyOn(encryptionService, 'encrypt');
+      const value = 'not an object';
+
+      await localSecureStorage.set(MOCK_KEY, value);
+
+      expect(encryptSpy).toBeCalledWith(JSON.stringify({ value }));
     });
 
     it('should fail for undefined key', async () => {

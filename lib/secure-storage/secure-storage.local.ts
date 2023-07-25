@@ -1,9 +1,11 @@
 import { BadRequestError } from 'errors/apps-sdk-error';
+import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
 import { ISecureStorageInstance } from 'types/secure-storage';
 import { ILocalStorageInstance } from 'types/secure-storage.local';
 import { decrypt, encrypt } from 'utils/cipher';
 import { initDb } from 'utils/local-db';
+import { isObject } from 'utils/validations';
 
 const validateKey = (key: string) => {
   if (!isDefined(key)) {
@@ -35,13 +37,11 @@ export class LocalSecureStorage implements ISecureStorageInstance {
     return JSON.parse(stringifiedValue) as T;
   }
   
-  async set<T extends object>(key: string, value: T) {
-    if (!isDefined(value) || typeof value !== 'object') {
-      throw new BadRequestError('Value must be an object');
-    }
+  async set<T extends JsonValue>(key: string, value: T) {
+    const valueAsObject = isObject(value) ? value : { value };
     
     validateKey(key);
-    const stringifiedValue = JSON.stringify(value);
+    const stringifiedValue = JSON.stringify(valueAsObject);
     const encryptedValue = encrypt(stringifiedValue);
     await this.db.set(key, encryptedValue);
     return true;

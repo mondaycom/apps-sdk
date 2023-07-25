@@ -2,6 +2,7 @@ import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
 import { getGcpConnectionData, getGcpIdentityToken } from 'lib/gcp/gcp';
 import { RequestOptions } from 'types/fetch';
 import { GcpConnectionData } from 'types/gcp';
+import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
 import {
   AppId,
@@ -15,6 +16,7 @@ import { getMondayCodeContext, validateEnvironment } from 'utils/env';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 import { TIME_IN_MILLISECOND } from 'utils/time-enum';
+import { isObject } from 'utils/validations';
 
 const logger = new Logger('SecureStorage', { mondayInternal: true });
 const MIN_TOKEN_EXPIRE_TTL_HOURS = 0.5;
@@ -180,10 +182,10 @@ export class SecureStorage implements ISecureStorageInstance {
     return result?.data as T;
   }
   
-  async set<T extends object>(key: string, value: T) {
+  async set<T extends JsonValue>(key: string, value: T) {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
-    const formalizedValue = { value };
+    const formalizedValue = isObject(value) ? value : { value };
     await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, {
       method: 'PUT',
       body: { data: formalizedValue }
