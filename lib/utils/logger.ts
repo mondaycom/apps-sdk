@@ -15,9 +15,15 @@ export class Logger {
     this.options = { ...defaultOptions, ...options };
   }
   
-  private logMessage(method: LogMethods, message: string, options?: Options) {
+  private logMessage(severity: LogMethods, message: string, options?: Options) {
     const logOptions = { ...this.options, ...options };
-    console[method](JSON.stringify({ tag: this.tag, message, ...logOptions }));
+    console.log(JSON.stringify({
+      severity,
+      tag: this.tag,
+      message,
+      ...logOptions,
+      ...logOptions.error && { stack: logOptions.error?.stack }
+    }));
   }
   
   debug(message: string, options?: Options) {

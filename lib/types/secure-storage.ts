@@ -1,6 +1,8 @@
+import { JsonValue } from 'types/general';
+
 export type ISecureStorageInstance = {
-  set: <T extends object>(key: string, value: T) => Promise<boolean>
-  get: <T extends object>(key: string) => Promise<T | null>
+  set: <T extends JsonValue>(key: string, value: T) => Promise<boolean>
+  get: <T extends JsonValue>(key: string) => Promise<T | null>
   delete: (key: string) => Promise<boolean>
 }
 
