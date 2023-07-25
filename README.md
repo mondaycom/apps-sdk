@@ -116,7 +116,8 @@ await secureStorage.delete(key);
   ```shell
   $ mapps code:env -m set -k <key> -v <value>
   ```
-- This environment variables are stored in a secure manner and can used to store sensitive data (i.e DB connection string, API keys, etc.)
+- This environment variables are stored in a secure manner and can be used to store sensitive data (i.e. DB connection string, API keys, etc.)
+- The environment variables are on the **app** level which means that they are accessible by all the **versions** of the app  
 
 ### Environment variables manager API
 
@@ -137,21 +138,21 @@ envManager = new EnvironmentVariablesManager({ updateProcessEnv: true });
 #### get
 
 ```typescript
-// Get a specific cached version of environment variable
-const cachedValue = envManager.get(key);
+// Get cached environment variable
+const cachedValue = envManager.get(key, { invalidate: false });
 
 // Get the latest version of environment variable
-const latestValue = envManager.get(key, { invalidate: true });
+const latestValue = envManager.get(key);
 ```
 
 #### getKeys
 
 ```typescript
 // Get all cached environment variables keys
-const cachedKeys = envManager.getKeys();
+const cachedKeys = envManager.getKeys({ invalidate: false });
 
 // Get all environment variables keys
-const latestKeys = envManager.getKeys({ invalidate: true });
+const latestKeys = envManager.getKeys();
 ```
 
 </details>

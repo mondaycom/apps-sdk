@@ -90,6 +90,30 @@ describe('EnvironmentVariablesManager', () => {
 
       expect(value).toEqual(null);
     });
+
+    it('should invalidate cached version by default', () => {
+      mockExistsSync.mockReturnValueOnce(true);
+      mockReadFileSync.mockReturnValueOnce(JSON.stringify(mockStoredData));
+      const firstResponse = environmentVariablesManager.get(mockKey);
+
+      mockExistsSync.mockReturnValueOnce(true);
+      mockReadFileSync.mockReturnValueOnce(JSON.stringify({ [mockKey]: 'new value' }));
+      const secondResponse = environmentVariablesManager.get(mockKey);
+
+      expect(firstResponse).not.toEqual(secondResponse);
+    });
+
+    it('should not invalidate cached version if invalidateCache is false', () => {
+      mockExistsSync.mockReturnValueOnce(true);
+      mockReadFileSync.mockReturnValueOnce(JSON.stringify(mockStoredData));
+      const firstResponse = environmentVariablesManager.get(mockKey);
+
+      mockExistsSync.mockReturnValueOnce(true);
+      mockReadFileSync.mockReturnValueOnce(JSON.stringify({ [mockKey]: 'new value' }));
+      const secondResponse = environmentVariablesManager.get(mockKey, { invalidate: false });
+
+      expect(firstResponse).toEqual(secondResponse);
+    });
   });
 
   describe('Set env in process.env', () => {

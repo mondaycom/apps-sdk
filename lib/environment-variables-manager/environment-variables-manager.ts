@@ -48,7 +48,8 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
   }
   
   private initEnvIfNeeded(options?: GetOptions) {
-    if (options?.invalidate || !this.cachedEnvironmentData) {
+    const shouldInvalidate = options?.invalidate ?? true;
+    if (shouldInvalidate || !this.cachedEnvironmentData) {
       this.initEnv();
     }
   }
