@@ -1,11 +1,14 @@
 import { existsSync, readFileSync } from 'fs';
 
 import { EnvironmentVariablesManager } from 'lib/environment-variables-manager/environment-variables-manager';
+import { isLocalEnvironment } from 'utils/env';
 
 const mockExistsSync = existsSync as jest.MockedFunction<typeof existsSync>;
 const mockReadFileSync = readFileSync as jest.MockedFunction<typeof readFileSync>;
+const mockIsLocalEnvironment = isLocalEnvironment as jest.MockedFunction<typeof isLocalEnvironment>;
 
 jest.mock('fs');
+jest.mock('utils/env');
 
 describe('EnvironmentVariablesManager', () => {
   const mockKey = 'mockKey';
@@ -21,6 +24,7 @@ describe('EnvironmentVariablesManager', () => {
   beforeEach(() => {
     process.env.SECRET_NAME = 'secret';
     environmentVariablesManager = new EnvironmentVariablesManager({});
+    mockIsLocalEnvironment.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -31,7 +35,7 @@ describe('EnvironmentVariablesManager', () => {
     it('should return all keys', () => {
       mockExistsSync.mockReturnValueOnce(true);
       mockReadFileSync.mockReturnValueOnce(JSON.stringify(mockStoredData));
-
+      
       const keys = environmentVariablesManager.getKeys();
 
       expect(keys).toEqual([mockKey, mockObjectKey]);
