@@ -1,3 +1,7 @@
+<h3 style="color:red"><b>Public access to this SDK is currently restricted but will become available in the next few months</b></h3>
+
+---
+
 # apps-sdk
 
 This sdk is used to leverage some of the capabilities exposed via `<monday-code />`:
@@ -89,7 +93,7 @@ const secureStorage = new SecureStorage();
 - `value: any` - value to store (must be serializable)
   - If value is not an object it will be wrapped in an object with a key `value`
   - If value is an object it will be stored as is
-  
+
 ```typescript
 await secureStorage.set(key, value);
 ```
@@ -119,7 +123,7 @@ await secureStorage.delete(key);
   $ mapps code:env -m set -k <key> -v <value>
   ```
 - This environment variables are stored in a secure manner and can be used to store sensitive data (i.e. DB connection string, API keys, etc.)
-- The environment variables are on the **app** level which means that they are accessible by all the **versions** of the app  
+- The environment variables are on the **app** level which means that they are accessible by all the **versions** of the app
 
 ### Environment variables manager API
 

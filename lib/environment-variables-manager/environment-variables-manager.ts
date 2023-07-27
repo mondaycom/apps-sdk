@@ -9,7 +9,7 @@ import {
   Options
 } from 'types/environment-variables-manager';
 import { isDefined } from 'types/guards';
-import { isDevelopmentEnvironment } from 'utils/env';
+import { isLocalEnvironment } from 'utils/env';
 import { Logger } from 'utils/logger';
 import { snakeCase } from 'utils/string-manipulations';
 
@@ -55,7 +55,7 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
   }
   
   private initEnv(options: Options = {}) {
-    if (isDevelopmentEnvironment()) {
+    if (isLocalEnvironment()) {
       logger.info('[EnvironmentVariablesManager] Running in development environment, skipping init', { mondayInternal: false });
       this.cachedEnvironmentData = process.env as EnvironmentData;
       return;
@@ -95,6 +95,6 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
       return null;
     }
     
-    return this.cachedEnvironmentData[key];
+    return this.cachedEnvironmentData[key] || process.env[key] as JsonValue;
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@mondaycom/apps-sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "monday apps SDK for NodeJS",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -21,7 +21,7 @@
     "prettier:check": "prettier --check .",
     "build:esm": "tsc -p ./tsconfig.esm.json && tsc-alias -f -p tsconfig.esm.json",
     "build:cjs": "tsc -p ./tsconfig.cjs.json && tsc-alias -f -p ./tsconfig.cjs.json",
-    "build": "rm -rf dist/ && yarn prettier:fix && yarn lint-fix && yarn build:esm && yarn build:cjs && ./scripts/build-package-json",
+    "build": "rm -rf dist/ && yarn prettier:fix && yarn lint-fix && ./scripts/create-minified-package-json.sh && yarn build:esm && yarn build:cjs && ./scripts/build-package-json",
     "prepublish-and-build": "yarn install --frozen-lockfile && yarn build"
   },
   "files": [
@@ -46,6 +46,7 @@
     "@types/jest": "^29.5.0",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/node-fetch": "^2.6.4",
+    "@types/update-notifier": "^6.0.4",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "eslint": "^8.32.0",
@@ -65,6 +66,9 @@
     "google-auth-library": "^8.7.0",
     "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^9.0.0",
-    "node-fetch": "^2.6.11"
+    "node-fetch": "^2.6.11",
+    "pino": "^8.14.1",
+    "pino-pretty": "^10.2.0",
+    "update-notifier": "^6.0.2"
   }
 }

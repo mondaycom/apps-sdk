@@ -1,4 +1,7 @@
+import { LocalLogger } from 'lib/logger/logger.local';
+import { isDefined } from 'types/guards';
 import { LogMethods, Options } from 'types/logger';
+import { isLocalEnvironment } from 'utils/env';
 
 const defaultOptions: Options = {
   mondayInternal: true
@@ -6,6 +9,7 @@ const defaultOptions: Options = {
 
 export class Logger {
   private readonly options: Options;
+  private readonly localLogger?: LocalLogger;
   
   /**
    * @param tag - Will be added to every logged message
@@ -13,17 +17,29 @@ export class Logger {
    */
   constructor(private tag: string, options: Options = {}) {
     this.options = { ...defaultOptions, ...options };
+    if (isLocalEnvironment()) {
+      this.localLogger = new LocalLogger(tag);
+    }
   }
   
   private logMessage(severity: LogMethods, message: string, options?: Options) {
     const logOptions = { ...this.options, ...options };
-    console.log(JSON.stringify({
-      severity,
-      tag: this.tag,
-      message,
-      ...logOptions,
-      ...logOptions.error && { stack: logOptions.error?.stack }
-    }));
+    if (this.localLogger && logOptions.mondayInternal === true) {
+      return;
+    }
+    
+    if (isDefined(this.localLogger)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      this.localLogger[severity?.toLowerCase()]?.(message, { ...logOptions?.error && { error: logOptions.error } });
+    } else {
+      console.log(JSON.stringify({
+        severity,
+        tag: this.tag,
+        message,
+        ...logOptions,
+        ...logOptions.error && { stack: logOptions.error?.stack }
+      }));
+    }
   }
   
   debug(message: string, options?: Options) {
