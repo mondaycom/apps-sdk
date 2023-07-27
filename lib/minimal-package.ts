@@ -1,0 +1,1 @@
+export default { name: '@mondaycom/apps-sdk', version: '0.1.2' };
