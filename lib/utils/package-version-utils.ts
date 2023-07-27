@@ -12,7 +12,6 @@ export async function handlePackageVersionUpdate() {
     // @ts-ignore
     // noinspection JSConstantReassignment
     notifier.update = await notifier.fetchInfo();
-    // await notifier.fetchInfo();
     
     if (notifier?.update?.type) {
       notifier.notify({
@@ -23,6 +22,6 @@ export async function handlePackageVersionUpdate() {
       });
     }
   } catch (err) {
-    console.log(`Failed to check version in the NPM repository. error: ${(err as Error).message}`);
+    console.log('Failed to check version in the NPM repository', { errorMessage: (err as Error).message });
   }
 }

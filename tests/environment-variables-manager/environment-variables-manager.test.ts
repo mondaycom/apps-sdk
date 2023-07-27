@@ -168,7 +168,8 @@ describe('EnvironmentVariablesManager', () => {
 
     describe('get', () => {
       it('should return value for key', () => {
-        const value = environmentVariablesManager.get('NODE_ENV');
+        process.env['TEST'] = 'test';
+        const value = environmentVariablesManager.get('TEST');
         expect(value).toEqual('test');
       });
 
