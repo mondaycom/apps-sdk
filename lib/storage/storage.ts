@@ -29,7 +29,8 @@ const generateCrudPath = (key: string, options: Options) => {
   
   const { shared } = options;
   const storageUrl = getStorageUrl();
-  const fullPath = `${storageUrl}/${key}${shared ? '?shareGlobally=true' : ''}`;
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  const fullPath = `${storageUrl}/${key}?shareGlobally=${!!shared}`;
   return fullPath;
 };
 
