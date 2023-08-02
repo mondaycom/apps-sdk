@@ -22,13 +22,14 @@ const getToken = (token?: Token, options: Options = {}): Token => {
   return selectedToken;
 };
 
-const generateCrudPath = (key: string) => {
+const generateCrudPath = (key: string, options: Options) => {
   if (!isDefined(key)) {
     throw new BadRequestError('Missing key');
   }
   
+  const { shared } = options;
   const storageUrl = getStorageUrl();
-  const fullPath = `${storageUrl}/${key}`;
+  const fullPath = `${storageUrl}/${key}${shared ? '?shareGlobally=true' : ''}`;
   return fullPath;
 };
 
@@ -36,7 +37,7 @@ const storageFetch = async <T>(key: string, initToken: Token | undefined, extern
   const { method, body } = options;
   const token = getToken(initToken, externalOptions);
   const stringifiedBody = JSON.stringify(body);
-  const url = generateCrudPath(key);
+  const url = generateCrudPath(key, externalOptions);
   if (!isDefined(method)) {
     throw new InternalServerError('An error occurred');
   }
