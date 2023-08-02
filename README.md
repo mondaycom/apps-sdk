@@ -21,7 +21,10 @@ This sdk is used to leverage some of the capabilities exposed via `<monday-code 
 
 - This is the way to store customer data for your app
 - **_key/value_** based where the **_key_** is a `string` and **_value_** can be `any serializable type` (object, number, string, etc.)
-- **_compartmentalized_** based on **accountId** and **app** for your specific app which means that data stored for one account will not be accessible from the context of another account
+- **_Compartmentalized_** based on **accountId** and **app** for your specific app which means that data stored for one account will not be accessible from the context of another account
+- There are two modes for the storage which are based on a passed option `shared`:
+  - `false` _(default)_ - The stored data will be accessible **only** you "backend" oriented apps (storage will not be shared between integrations and views).
+  - `true` - The stored data will be accessible from **both** "backend" and "frontend" oriented apps.
 
 ### Storage API
 
@@ -42,22 +45,23 @@ const storage = new Storage('<ACCESS_TOKEN>');
 - `key: string` - key to store the content for
 - `value: any` - value to store
 - `previousVersion?: string` - the last version of the stored value for a specific key (_OPTIONAL_)
+- `shared?: boolean` - whether the stored data will be accessible from both "backend" and "frontend" oriented apps (_OPTIONAL_)
 - `version: string` - the new version of the stored value
 
 ```typescript
-const { version } = await storage.set(key, value, { previousVersion });
+const { version } = await storage.set(key, value, { previousVersion, shared });
 ```
 
 #### get
 
 ```typescript
-const storedValue = await storage.get(key);
+const storedValue = await storage.get(key, { shared });
 ```
 
 #### delete
 
 ```typescript
-await storage.delete(key);
+await storage.delete(key, { shared });
 ```
 
 </details>

@@ -45,6 +45,9 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
   constructor(options?: Options) {
     this.shouldUpdateProcessEnv = !!options?.updateProcessEnv;
     this.initEnv(options);
+    if (isLocalEnvironment()) {
+      logger.info('[EnvironmentVariablesManager] Running in development environment, Using process.env', { mondayInternal: false });
+    }
   }
   
   private initEnvIfNeeded(options?: GetOptions) {
@@ -56,7 +59,6 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
   
   private initEnv(options: Options = {}) {
     if (isLocalEnvironment()) {
-      logger.info('[EnvironmentVariablesManager] Running in development environment, skipping init', { mondayInternal: false });
       this.cachedEnvironmentData = process.env as EnvironmentData;
       return;
     }
@@ -75,7 +77,7 @@ export class EnvironmentVariablesManager implements IEnvironmentVariablesManager
       });
     }
     
-    logger.info('[EnvironmentVariablesManager] Initialized environment variables data', { mondayInternal: false });
+    logger.info('[EnvironmentVariablesManager] Initialized environment variables data', { mondayInternal: true });
   }
   
   getKeys(options?: GetOptions): Array<string> {
