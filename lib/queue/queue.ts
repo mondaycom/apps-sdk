@@ -19,7 +19,7 @@ export class Queue implements IQueue {
         }
 
         try {
-            const data = (typeof message === 'string' || message instanceof String) ? Buffer.from(JSON.stringify(message)) : message;
+            const data = (typeof message === 'string' || message instanceof String) ? Buffer.from(message) : message;
             const messageId = await this.pubSubClient
                 .topic(topicName)
                 .publishMessage({data, attributes: {'Content-Type': 'application/json'}});
