@@ -12,7 +12,8 @@ export class Queue implements IQueue {
         this.pubSubClient = new PubSub();
     }
 
-    async publishMessage(topicName: string, message: (Uint8Array|string|null)): Promise<string> {
+    async publishMessage(message: (Uint8Array|string|null), options?: { topicName: string }): Promise<string> {
+        const topicName =  options?.topicName || process.env.MNDY_TOPIC_NAME;
         if (!topicName) {
             throw new BadRequestError('topicName is missing or empty.');
         }
