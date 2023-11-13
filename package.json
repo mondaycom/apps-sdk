@@ -1,6 +1,6 @@
 {
   "name": "@mondaycom/apps-sdk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "monday apps SDK for NodeJS",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -61,6 +61,7 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^4.0.7",
     "app-root-path": "^3.1.0",
     "google-auth-library": "^8.7.0",
     "http-status-codes": "^2.2.0",
