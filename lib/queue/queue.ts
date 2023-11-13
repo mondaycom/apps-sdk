@@ -12,17 +12,17 @@ export class Queue implements IQueue {
         this.pubSubClient = new PubSub();
     }
 
-    async publishMessage(message: (Uint8Array|string|null), options?: { topicName: string }): Promise<string> {
+    async publishMessage(message: (Uint8Array|string), options?: { topicName: string }): Promise<string> {
         const topicName =  options?.topicName || process.env.MNDY_TOPIC_NAME;
         if (!topicName) {
             throw new BadRequestError('topicName is missing or empty.');
         }
 
         try {
-
+            const data = (typeof message === 'string' || message instanceof String) ? Buffer.from(JSON.stringify(message)) : message;
             const messageId = await this.pubSubClient
                 .topic(topicName)
-                .publishMessage({data: message, attributes: {'Content-Type': 'application/json'}});
+                .publishMessage({data, attributes: {'Content-Type': 'application/json'}});
             return messageId;
 
         } catch (err) {
