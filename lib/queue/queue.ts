@@ -26,7 +26,7 @@ export class Queue implements IQueue {
 
         } catch (err) {
             logger.error(JSON.stringify(err));
-            if (err  instanceof Error) {
+            if (err instanceof Error) {
                 throw new BadRequestError(err.message);
             } else {
                 throw new InternalServerError('An error occurred while sending message toe queue.')
