@@ -17,6 +17,7 @@ export class QueueDev implements IQueue {
     constructor() {
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
     async publishMessage(message: (Uint8Array|string), options?: { topicName: string }): Promise<string> {
         const payload = (message.toString) ? message.toString() : message;
         const serverAddress = localServerAddress();
@@ -35,10 +36,7 @@ export class QueueDev implements IQueue {
         if (!secret) {
             throw new BadRequestError('secret is required.');
         }
-        const topicMessageSecret = process.env.MNDY_TOPIC_MESSAGES_SECRET;
-        if (secret !== devQueueSecret) {
-            return false;
-        }
-        return true;
+
+        return (secret === devQueueSecret)
     }
 }

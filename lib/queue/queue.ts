@@ -19,7 +19,7 @@ export class QueueProd implements IQueue {
         }
 
         try {
-            const data = (typeof message === 'string' || message instanceof String) ? Buffer.from(message) : message;
+            const data = (typeof message === 'string') ? Buffer.from(message) : message;
             const messageId = await this.pubSubClient
                 .topic(topicName)
                 .publishMessage({data, attributes: {'Content-Type': 'application/json'}});
@@ -39,9 +39,6 @@ export class QueueProd implements IQueue {
             throw new BadRequestError('secret is required.');
         }
         const topicMessageSecret = process.env.MNDY_TOPIC_MESSAGES_SECRET;
-        if (secret !== topicMessageSecret) {
-            return false;
-        }
-        return true;
+        return secret === topicMessageSecret;
     }
 }
