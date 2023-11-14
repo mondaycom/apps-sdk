@@ -32,7 +32,7 @@ export class QueueDev implements IQueue {
         return devGenerateMessageId();
     }
 
-    validateMessageOrigin(secret: string) : boolean {
+    validateMessageSecret(secret: string) : boolean {
         if (!secret) {
             throw new BadRequestError('secret is required.');
         }
