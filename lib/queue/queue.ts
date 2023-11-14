@@ -33,6 +33,7 @@ export class Queue implements IQueue {
             if (isLocalEnvironment()) {
                 const payload = (message.toString) ? message.toString() : message;
                 const serverAddress = localServerAddress();
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 fetch(`${serverAddress}/mndy-queue?secret=${devQueueSecret}`, {
                     'headers': {
                         'content-type': 'application/json',
