@@ -1,10 +1,10 @@
 import { PubSub } from '@google-cloud/pubsub';
+import fetch from 'node-fetch';
 
 import {BadRequestError, InternalServerError} from 'errors/apps-sdk-error';
 import { IQueue } from 'types/queue';
+import {isLocalEnvironment, localServerAddress} from 'utils/env';
 import { Logger } from 'utils/logger';
-import {isLocalEnvironment, localServerAddress} from "utils/env";
-import fetch from "node-fetch";
 
 const logger = new Logger('Queue', { mondayInternal: true });
 const devQueueSecret = '376a573e97497a294fd50e584fa3e507d1eab65abd2019709c0e8dc6b18932fc'
@@ -34,11 +34,11 @@ export class Queue implements IQueue {
                 const payload = (message.toString) ? message.toString() : message;
                 const serverAddress = localServerAddress();
                 fetch(`${serverAddress}/mndy-queue?secret=${devQueueSecret}`, {
-                    "headers": {
-                        "content-type": "application/json",
+                    'headers': {
+                        'content-type': 'application/json',
                     },
-                    "body": payload,
-                    "method": "POST"
+                    'body': payload,
+                    'method': 'POST'
                 });
                 return devGenerateMessageId();
             } else {
