@@ -33,7 +33,7 @@ export class QueueProd implements IQueue {
     validateMessageOrigin(secret: string) : boolean {
         const envMessageSecret = process.env.MNDY_TOPIC_MESSAGES_SECRET;
         if (!envMessageSecret) {
-            throw new BadRequestError('En environment variable name "MNDY_SERVER_ADDRESS" is required.');
+            throw new BadRequestError('En environment variable name "MNDY_TOPIC_MESSAGES_SECRET" is required.');
         }
         if (!secret) {
             throw new BadRequestError('secret is required.');
