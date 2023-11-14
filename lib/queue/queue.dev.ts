@@ -4,7 +4,7 @@ import { BadRequestError } from 'errors/apps-sdk-error';
 import { IQueue } from 'types/queue';
 import { localServerAddress } from 'utils/env';
 
-const devQueueSecret = '376a573e97497a294fd50e584fa3e507d1eab65abd2019709c0e8dc6b18932fc'
+const devQueueSecret = '376a573e97497a294fd50e584fa3e507d1eab65abd2019709c0e8dc6b1893212'
 const devGenerateMessageId = () => {
     let messageId = '';
     while (messageId.length < 16) {
