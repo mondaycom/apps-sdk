@@ -1,1 +1,1 @@
-export default { name: '@mondaycom/apps-sdk', version: '0.2.6' };
+export default { name: '@mondaycom/apps-sdk', version: '0.2.7' };
