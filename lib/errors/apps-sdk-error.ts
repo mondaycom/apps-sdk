@@ -44,3 +44,9 @@ export class ForbiddenError extends BaseError {
     super(ERROR_CODE.FORBIDDEN, message, StatusCodes.FORBIDDEN);
   }
 }
+
+export class ConflictError extends BaseError {
+  constructor(public message: string) {
+    super(ERROR_CODE.BAD_REQUEST, message, StatusCodes.CONFLICT);
+  }
+}

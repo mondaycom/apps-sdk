@@ -11,6 +11,10 @@ export type SetResponse = {
   error?: string
 }
 
+export type ErrorResponse = {
+  error?: string
+} | undefined | null
+
 export type IStorageInstance = {
   set: <T extends object>(key: string, value: T, options?: Options) => Promise<SetResponse>
   get: <T extends object>(key: string, options?: Options) => Promise<T | null>

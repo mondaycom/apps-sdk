@@ -1,7 +1,7 @@
-import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
+import {BadRequestError, ConflictError, InternalServerError} from 'errors/apps-sdk-error';
 import { RequestOptions } from 'types/fetch';
 import { isDefined } from 'types/guards';
-import { IStorageInstance, Options, SetResponse, Token } from 'types/storage';
+import {ErrorResponse, IStorageInstance, Options, SetResponse, Token} from 'types/storage';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 
@@ -68,8 +68,11 @@ export class Storage implements IStorageInstance {
   }
 
   async delete(key: string, options: Options = {}) {
-    await storageFetch(key, this.token, options, { method: 'DELETE' });
+    const result = await storageFetch<ErrorResponse>(key, this.token, options, { method: 'DELETE' });
     logger.info(`[Storage.delete] Deleted data for key from storage\nkey: ${key}`, { mondayInternal: false });
+    if (result?.error) {
+      throw new ConflictError(result.error)
+    }
     return true;
   }
 
