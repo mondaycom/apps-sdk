@@ -7,7 +7,8 @@ export type Options = {
 }
 
 export type SetResponse = {
-  version: string
+  version?: string
+  error?: string
 }
 
 export type IStorageInstance = {
