@@ -101,9 +101,9 @@ export class Storage implements IStorageInstance {
       return { version, success: true };
     } else {
       if (error) {
-        return {error, success: false};
+        return { error, success: false };
       } else {
-        return {error: 'unknown error occurred', success: false};
+        return { error: 'unknown error occurred', success: false };
       }
     }
   }
