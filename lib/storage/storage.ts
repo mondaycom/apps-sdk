@@ -1,7 +1,7 @@
-import {BadRequestError, InternalServerError} from 'errors/apps-sdk-error';
+import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
 import { RequestOptions } from 'types/fetch';
 import { isDefined } from 'types/guards';
-import {ErrorResponse, IStorageInstance, Options, SetResponse, Token} from 'types/storage';
+import { ErrorResponse, IStorageInstance, Options, SetResponse, Token } from 'types/storage';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 
