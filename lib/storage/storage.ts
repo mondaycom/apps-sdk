@@ -81,10 +81,10 @@ export class Storage implements IStorageInstance {
     const result = await storageFetch<T>(key, this.token, options, { method: 'GET' });
     logger.info(`[Storage.get] Got data for key from storage\nkey: ${key}`, { mondayInternal: false });
     if (!isDefined(result)) {
-      return null;
+      return { success: false, value: null };
     }
 
-    return result;
+    return { success: true, ...result };
   }
 
   async set(key: string, value, options: Options = {}) {

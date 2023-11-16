@@ -57,7 +57,7 @@ const { version, success, error } = await storage.set(key, value, { previousVers
 #### get
 
 ```typescript
-const { value, version } = await storage.get(key, { shared });
+const { value, version, success } = await storage.get(key, { shared });
 ```
 
 #### delete
