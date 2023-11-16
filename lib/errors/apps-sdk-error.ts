@@ -44,4 +44,3 @@ export class ForbiddenError extends BaseError {
     super(ERROR_CODE.FORBIDDEN, message, StatusCodes.FORBIDDEN);
   }
 }
-
