@@ -1,7 +1,7 @@
 import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
 import { RequestOptions } from 'types/fetch';
 import { isDefined } from 'types/guards';
-import { IStorageInstance, Options, SetResponse, Token } from 'types/storage';
+import { ErrorResponse, IStorageInstance, Options, SetResponse, Token } from 'types/storage';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 
@@ -68,19 +68,23 @@ export class Storage implements IStorageInstance {
   }
 
   async delete(key: string, options: Options = {}) {
-    await storageFetch(key, this.token, options, { method: 'DELETE' });
-    logger.info(`[Storage.delete] Deleted data for key from storage\nkey: ${key}`, { mondayInternal: false });
-    return true;
+    const result = await storageFetch<ErrorResponse>(key, this.token, options, {method: 'DELETE'});
+    logger.info(`[Storage.delete] Deleted data for key from storage\nkey: ${key}`, {mondayInternal: false});
+    if (result?.error) {
+      return { error: result.error, success: false };
+    } else {
+      return { success: true };
+    }
   }
 
   async get<T>(key: string, options: Options = {}) {
     const result = await storageFetch<T>(key, this.token, options, { method: 'GET' });
     logger.info(`[Storage.get] Got data for key from storage\nkey: ${key}`, { mondayInternal: false });
     if (!isDefined(result)) {
-      return null;
+      return { success: false, value: null };
     }
 
-    return result;
+    return { success: true, ...result };
   }
 
   async set(key: string, value, options: Options = {}) {

@@ -16,6 +16,8 @@ This sdk is used to leverage some of the capabilities exposed via `<monday-code 
 
 ## Storage
 
+<h4 style="color:red"><b>* Please note Storage contracts have been updated at version v1.0.0 *</b></h4>
+
 <details>
 <summary>key/value storage for monday-code projects</summary>
 
@@ -49,19 +51,19 @@ const storage = new Storage('<ACCESS_TOKEN>');
 - `version: string` - the new version of the stored value
 
 ```typescript
-const { version } = await storage.set(key, value, { previousVersion, shared });
+const { version, success, error } = await storage.set(key, value, { previousVersion, shared });
 ```
 
 #### get
 
 ```typescript
-const storedValue = await storage.get(key, { shared });
+const { value, version, success } = await storage.get(key, { shared });
 ```
 
 #### delete
 
 ```typescript
-await storage.delete(key, { shared });
+const { success, error } = await storage.delete(key, { shared });
 ```
 
 </details>
