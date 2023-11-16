@@ -16,7 +16,7 @@ This sdk is used to leverage some of the capabilities exposed via `<monday-code 
 
 ## Storage
 
-<h4 style="color:red"><b>* Please note Storage contracts been updated *</b></h4>
+<h4 style="color:red"><b>* Please note Storage contracts have been updated *</b></h4>
 
 <details>
 <summary>key/value storage for monday-code projects</summary>
