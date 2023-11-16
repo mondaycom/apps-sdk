@@ -6,6 +6,7 @@ export enum ERROR_CODE {
   FORBIDDEN = 'forbidden',
   NOT_FOUND = 'not found',
   BAD_REQUEST = 'bad request',
+  CONFLICT = 'conflict',
   INTERNAL_SERVER = 'internal server error'
 }
 
@@ -47,6 +48,6 @@ export class ForbiddenError extends BaseError {
 
 export class ConflictError extends BaseError {
   constructor(public message: string) {
-    super(ERROR_CODE.BAD_REQUEST, message, StatusCodes.CONFLICT);
+    super(ERROR_CODE.CONFLICT, message, StatusCodes.CONFLICT);
   }
 }
