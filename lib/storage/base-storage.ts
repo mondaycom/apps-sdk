@@ -8,12 +8,11 @@ import {Logger} from 'utils/logger';
 export abstract class BaseStorage {
     protected logger: Logger;
 
-    protected constructor(protected token?: Token) {
+    protected constructor(private readonly token: Token) {
         this.logger = new Logger('Storage', { mondayInternal: true });
     }
-    protected async storageFetch<T>(key: string, initToken: Token | undefined, externalOptions: Options, options: RequestOptions) {
+    protected async storageFetch<T>(key: string, options: RequestOptions, externalOptions?: Options) {
         const { method, body } = options;
-        const token = this.getToken(initToken, externalOptions);
         const stringifiedBody = JSON.stringify(body);
         const url = this.generateCrudPath(key, externalOptions);
         if (!isDefined(method)) {
@@ -21,7 +20,7 @@ export abstract class BaseStorage {
         }
 
         const headers = {
-            Authorization: token,
+            Authorization: this.token,
             'Content-Type': 'application/json'
         };
 
@@ -45,25 +44,15 @@ export abstract class BaseStorage {
         return url;
     }
 
-    private getToken (token?: Token, options: Options = {}): Token {
-        const selectedToken = options.token || token;
-
-        if (!isDefined(selectedToken)) {
-            throw new BadRequestError('Missing token');
-        }
-
-        return selectedToken;
-    }
-
-    private generateCrudPath (key: string, options: Options) {
+    private generateCrudPath (key: string, options?: Options) {
         if (!isDefined(key)) {
             throw new BadRequestError('Missing key');
         }
 
-        const { shared } = options;
+        const shareGlobally = options?.shared ?? false;
         const storageUrl = this.getStorageUrl();
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const fullPath = `${storageUrl}/${key}?shareGlobally=${!!shared}`;
+        const fullPath = `${storageUrl}/${key}?shareGlobally=${shareGlobally}`;
         return fullPath;
     }
 }

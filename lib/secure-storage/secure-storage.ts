@@ -44,7 +44,7 @@ const secureStorageFetch = async <T>(path: string, connectionData: ConnectionDat
   try {
     result = await fetchWrapper<VaultBaseResponse>(path, fetchObj);
   } catch (error: unknown) {
-    logger.debug('[secureStorageFetch] Unexpected error occurred while communicating with secure storage', { error: error as Error });
+    logger.error('[secureStorageFetch] Unexpected error occurred while communicating with secure storage', { error: error as Error });
     throw new InternalServerError('An issue occurred while accessing secure storage');
   }
   
@@ -53,7 +53,7 @@ const secureStorageFetch = async <T>(path: string, connectionData: ConnectionDat
   }
   
   if (isDefined(result.errors)) {
-    logger.debug(`[secureStorageFetch] Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`);
+    logger.error(`[secureStorageFetch] Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`);
     throw new BadRequestError('Provided input is invalid');
   }
   
@@ -72,7 +72,7 @@ const generateCrudPath = (path: string, id?: AppId) => {
   }
   
   if (!isDefined(id)) {
-    logger.debug('[generateCrudPath] projectId is not defined');
+    logger.error('[generateCrudPath] projectId is not defined');
     throw new InternalServerError('An issue occurred while accessing secure storage');
   }
   
@@ -97,7 +97,7 @@ const getToken = async (gcpCredentials: GcpConnectionData, connectionData: Conne
   });
   
   if (!isDefined(loginResponse)) {
-    logger.warn('[getToken] invalid gcp login response');
+    logger.error('[getToken] invalid gcp login response');
     throw new InternalServerError('An error occurred while authenticating');
   }
   
@@ -148,7 +148,7 @@ const authenticate = async (connectionData: ConnectionData): Promise<ConnectionD
   }
   
   if (!isDefined(id)) {
-    logger.debug('[authenticate] projectId is not defined');
+    logger.error('[authenticate] projectId is not defined');
     throw new InternalServerError('An issue occurred while accessing secure storage');
   }
   
@@ -166,7 +166,6 @@ export class SecureStorage implements ISecureStorageInstance {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
     await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'DELETE' });
-    logger.info(`[SecureStorage] Deleted data for key from secure storage\nkey: ${key}`, { mondayInternal: false });
     return true;
   }
   
@@ -174,7 +173,6 @@ export class SecureStorage implements ISecureStorageInstance {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
     const result = await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'GET' });
-    logger.info(`[SecureStorage] Got data for key from secure storage\nkey: ${key}`, { mondayInternal: false });
     if (!isDefined(result?.data)) {
       return null;
     }
@@ -190,7 +188,6 @@ export class SecureStorage implements ISecureStorageInstance {
       method: 'PUT',
       body: { data: formalizedValue }
     });
-    logger.info(`[SecureStorage] Set data for key in secure storage\nkey: ${key}`, { mondayInternal: false });
     return true;
   }
 }

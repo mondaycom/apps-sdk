@@ -4,8 +4,8 @@ import { ErrorResponse, IStorageInstance, Options, SetResponse } from 'types/sto
 
 export class Storage extends BaseStorage implements IStorageInstance {
 
-  async delete(key: string, options: Options = {}) {
-    const result = await this.storageFetch<ErrorResponse>(key, this.token, options, {method: 'DELETE'});
+  async delete(key: string, options?: Options) {
+    const result = await this.storageFetch<ErrorResponse>(key, {method: 'DELETE'}, options);
     if (result?.error) {
       return { error: result.error, success: false };
     } else {
@@ -14,7 +14,7 @@ export class Storage extends BaseStorage implements IStorageInstance {
   }
 
   async get<T>(key: string, options: Options = {}) {
-    const result = await this.storageFetch<T>(key, this.token, options, { method: 'GET' });
+    const result = await this.storageFetch<T>(key,{ method: 'GET' }, options);
     if (!isDefined(result)) {
       return { success: false, value: null };
     }
@@ -25,14 +25,14 @@ export class Storage extends BaseStorage implements IStorageInstance {
   async set(key: string, value, options: Options = {}) {
     const { previousVersion } = options;
 
-    const result = await this.storageFetch<SetResponse>(key, this.token, options, {
+    const result = await this.storageFetch<SetResponse>(key, {
       method: 'POST',
       body: {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         value,
         ...previousVersion && { previous_version: previousVersion }
       }
-    });
+    }, options);
 
     const { version, error } = result;
     if (version) {

@@ -1,7 +1,6 @@
 export type Token = string;
 
 export type Options = {
-  token?: Token,
   shared?: boolean,
   previousVersion?: string
 }
