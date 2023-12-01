@@ -8,7 +8,7 @@ import {Logger} from 'utils/logger';
 export abstract class BaseStorage {
     protected logger: Logger;
 
-    protected constructor(private readonly token: Token) {
+    constructor(private readonly token: Token) {
         this.logger = new Logger('Storage', { mondayInternal: true });
     }
     protected async storageFetch<T>(key: string, options: RequestOptions, externalOptions?: Options) {
@@ -21,7 +21,8 @@ export abstract class BaseStorage {
 
         const headers = {
             Authorization: this.token,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'User-Agent': 'monday-apps-sdk'
         };
 
         let response: T | undefined;
