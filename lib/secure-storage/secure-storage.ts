@@ -53,7 +53,7 @@ const secureStorageFetch = async <T>(path: string, connectionData: ConnectionDat
   }
   
   if (isDefined(result.errors)) {
-    logger.error(`[secureStorageFetch] Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`);
+    logger.warn(`[secureStorageFetch] Errors occurred while communicating with secure storage.\nErrors: ${result.errors.join()}`);
     throw new BadRequestError('Provided input is invalid');
   }
   
