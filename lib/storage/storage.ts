@@ -13,7 +13,7 @@ import {
 
 export class Storage extends BaseStorage implements IStorageInstance {
 
-  async increaseCounter(period: Period, options?: counterOptions) {
+  async incrementCounter(period: Period, options?: counterOptions) {
     const result = await this.storageFetchV2<CounterResponse>(this.counterUrl(), { method: 'PUT', body: {...(options || {}), period} });
     const { error, message, newCounterValue} = result || {};
     if (result?.error) {
