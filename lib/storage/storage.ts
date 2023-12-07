@@ -1,19 +1,19 @@
 import {BaseStorage} from 'lib/storage/base-storage';
 import { isDefined } from 'types/guards';
 import {
+  CounterOptions,
   CounterResponse,
   ErrorResponse,
   IStorageInstance,
   Options,
   Period,
-  SetResponse,
-  counterOptions
+  SetResponse
 } from 'types/storage';
 
 
 export class Storage extends BaseStorage implements IStorageInstance {
 
-  async incrementCounter(period: Period, options?: counterOptions) {
+  async incrementCounter(period: Period, options?: CounterOptions) {
     const result = await this.storageFetchV2<CounterResponse>(this.counterUrl(), { method: 'PUT', body: {...(options || {}), period} });
     const { error, message, newCounterValue} = result || {};
     if (result?.error) {

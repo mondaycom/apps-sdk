@@ -11,7 +11,7 @@ export type Options = {
   previousVersion?: string
 }
 
-export type counterOptions = {
+export type CounterOptions = {
   incrementBy?: number,
   kind?: string
 }
