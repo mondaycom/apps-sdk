@@ -72,15 +72,15 @@ const { success, error } = await storage.delete(key, { shared });
 ## Operations counter
 
 <details>
-<summary>A tool that provide the ability to count the number of operations base on a pre-defined period.</summary>
+<summary>A tool that provides the ability to count the number of operations base on a pre-defined period.</summary>
 
 - This is the way to count operations around your project.
 - Has 3 pre-defined periods
   - `DAILY` - the counter will be reset every day (base on GMT time zone)
   - `MONTHLY` - the counter will be reset every month (base on GMT time zone).
   - `YEARLY` -  the counter will be reset every year (base on GMT time zone).
-- You can increase the counter by a positive number e.g. if the current counter value is 4, and you like a specific operation to increase to 6 than you add 2 instead of the default which is 1, you can do that by using the BODY `incrementBy` property.
-- You can generate on the fly new counters e.g. for DOC caning and a different counter for IMAGE scanning by using the BODY `kind` property.
+- You can increase the counter any positive number. By default it increases by 1.
+- We support different counter kinds, with a default counter that does not have any kind and is meant to simply count the usage of your workflow / app. If you want to count multiple types of operations e.g. for DOC scanning and for IMAGE scanning you can supply the optional `kind` property.
 
 #### initialize
 
@@ -92,13 +92,13 @@ const storage = new Storage('<ACCESS_TOKEN>');
 #### incrementCounter
 
 - `Period: string` - This is an enum for those value: `DAILY`, `MONTHLY`, `YEARLY`
-- `incrementBy?: number` - by how much to increase the current counter value (_OPTIONAL_)
-- `kind?: string` - set a new counter for the `kind` operation name (_OPTIONAL_)
+- `incrementBy?: number` - by how much to increase the current counter value (_OPTIONAL_). Default is 1
+- `kind?: string` - set a new counter for the `kind` operation name (_OPTIONAL_). kind should be a string of up to 10 characters containing alphanumeric characters and the symbols -_
 
 ```typescript
 const { message, newCounterValue, success, error } = await storage.incrementCounter(Period.MONTHLY, {
   incrementBy: 2,
-  kind: 'foo'
+  kind: 'image_scan'
 });
 ```
 
