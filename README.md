@@ -9,6 +9,7 @@ This sdk is used to leverage some of the capabilities exposed via `<monday-code 
 <!-- TOC -->
 
 - [Storage](#storage)
+- [Operations counter](#operations-counter)
 - [Secure storage](#secure-storage)
 - [Environment variables manager](#environment-variables-manager)
 - [Logger](#logger)
