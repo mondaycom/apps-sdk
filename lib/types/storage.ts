@@ -1,13 +1,31 @@
 export type Token = string;
+export enum Period {
+  DAILY='DAILY',
+  MONTHLY='MONTHLY',
+  YEARLY='YEARLY'
+}
+
 
 export type Options = {
   shared?: boolean,
   previousVersion?: string
 }
 
+export type CounterOptions = {
+  incrementBy?: number,
+  kind?: string
+}
+
 export type GetResponse = {
   version?: string
   success: boolean
+  error?: string
+}
+
+
+export type CounterResponse = {
+  message: string
+  newCounterValue: number
   error?: string
 }
 

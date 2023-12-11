@@ -11,6 +11,35 @@ export abstract class BaseStorage {
     constructor(private readonly token: Token) {
         this.logger = new Logger('Storage', { mondayInternal: true });
     }
+
+    protected async storageFetchV2<T>(url: string, options: RequestOptions) {
+        const { method, body } = options;
+        const stringifiedBody = JSON.stringify(body);
+        if (!isDefined(method)) {
+            throw new InternalServerError('An error occurred');
+        }
+
+        const headers = {
+            Authorization: this.token,
+            'Content-Type': 'application/json',
+            'User-Agent': 'monday-apps-sdk'
+        };
+
+        let response: T | undefined;
+        try {
+            response = await fetchWrapper<T>(url, {
+                method,
+                headers,
+                ...(body && { body: stringifiedBody })
+            });
+        } catch (error: unknown) {
+            this.logger.error('[storageFetch] Unexpected error occurred while communicating with storage', { error: error as Error });
+            throw new InternalServerError('An issue occurred while accessing storage');
+        }
+
+        return response as T;
+    }
+
     protected async storageFetch<T>(key: string, options: RequestOptions, externalOptions?: Options) {
         const { method, body } = options;
         const stringifiedBody = JSON.stringify(body);
@@ -45,6 +74,11 @@ export abstract class BaseStorage {
         return url;
     }
 
+    private getStorageUrlV2 () {
+        const url = process.env.STORAGE_URL || 'https://apps-storage.monday.com/api/v2';
+        return url;
+    }
+
     private generateCrudPath (key: string, options?: Options) {
         if (!isDefined(key)) {
             throw new BadRequestError('Missing key');
@@ -54,6 +88,13 @@ export abstract class BaseStorage {
         const storageUrl = this.getStorageUrl();
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const fullPath = `${storageUrl}/${key}?shareGlobally=${shareGlobally}`;
+        return fullPath;
+    }
+
+    public counterUrl () {
+        const storageUrl = this.getStorageUrlV2();
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const fullPath = `${storageUrl}/operations`;
         return fullPath;
     }
 }
