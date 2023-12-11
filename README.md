@@ -77,16 +77,16 @@ const { success, error } = await storage.delete(key, { shared });
 
 - This is the way to count operations around your project.
 - Has 3 pre-defined periods
-  - `DAILY` - the counter will be reset every day (universal time)
-  - `MONTHLY` - the counter will be reset every month (universal time).
-  - `YEARLY` -  the counter will be reset every year (universal time).
+  - `DAILY` - the counter will be reset every day (at 00:00 GMT)
+  - `MONTHLY` - the counter will be reset every month
+  - `YEARLY` -  the counter will be reset every year
 - You can increase the counter any positive number. By default, it increases by 1.
 - We support different counter kinds, with a default counter that does not have any kind and is meant to simply count the usage of your workflow / app. If you want to count multiple types of operations e.g. for DOC scanning and for IMAGE scanning you can supply the optional `kind` property.
 
 #### initialize
 
 ```typescript
-import { Storage } from '@mondaycom/apps-sdk';
+import { Storage, Period } from '@mondaycom/apps-sdk';
 const storage = new Storage('<ACCESS_TOKEN>');
 ```
 
