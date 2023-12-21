@@ -14,6 +14,7 @@ export type Options = {
 export type CounterOptions = {
   incrementBy?: number,
   kind?: string
+  renewalDate?: Date
 }
 
 export type GetResponse = {
