@@ -222,3 +222,63 @@ logger.error('error message', { error: new Error('error') });
 ```
 
 </details>
+
+## Monday API Client
+
+<details>
+<summary>Querying the monday.com GraphQL API seamlessly on behalf of the connected user, or using a provided API token.</summary>
+
+#### initialize
+
+```typescript
+import { MondayApiClient } from '@mondaycom/apps-sdk';
+
+const mondayClient = new MondayApiClient();
+mondayClient.setToken(token);
+mondayClient.setApiVersion('2023-10');
+```
+
+```typescript
+import { MondayApiClient } from '@mondaycom/apps-sdk';
+
+const mondayClient = new MondayApiClient(token);
+mondayClient.setApiVersion('2023-10');
+```
+
+#### API
+
+```typescript
+const query = `query {
+        items(ids: [${itemId}]) {
+          column_values(ids: ["${columnId}"]) {
+            text
+          }
+        }
+      }`;
+
+logger.debug(`getApiToGetColumnValue->query:
+    ${query}
+    `);
+const response = await mondayClient.api(query);
+```
+
+```typescript
+const query = `mutation ($value: String, $board_id: ID!, $item_id: ID, $column_id: String!){
+        change_simple_column_value (
+              board_id: $board_id,
+              item_id: $item_id,
+              column_id: $column_id,
+              value: $value ) {
+                     id
+        }
+  }`;
+const variables = {
+  board_id: boardId,
+  item_id: itemId,
+  column_id: columnId,
+  value: value.toString(),
+};
+const response = await await mondayClient.api(query, { variables });
+```
+
+</details>
