@@ -1,4 +1,4 @@
-export type Token = string;
+
 export enum Period {
   DAILY='DAILY',
   MONTHLY='MONTHLY',
