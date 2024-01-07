@@ -1,7 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
-import fetch, { RequestInit, Response } from 'node-fetch';
+import fetch from 'node-fetch';
 
 import { ForbiddenError } from 'errors/apps-sdk-error';
+
+import type { RequestInit, Response } from 'node-fetch';
 
 const handleFetchErrors = (response: Response): void => {
   if (response.status == StatusCodes.FORBIDDEN) {

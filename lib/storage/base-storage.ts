@@ -1,9 +1,10 @@
 import {BadRequestError, InternalServerError} from 'errors/apps-sdk-error';
-import {RequestOptions} from 'types/fetch';
 import {isDefined} from 'types/guards';
-import {Options, Token} from 'types/storage';
 import {fetchWrapper} from 'utils/fetch-wrapper';
 import {Logger} from 'utils/logger';
+
+import type {RequestOptions} from 'types/fetch';
+import type {Options, Token} from 'types/storage';
 
 export abstract class BaseStorage {
     protected logger: Logger;

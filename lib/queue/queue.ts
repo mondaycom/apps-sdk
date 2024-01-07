@@ -1,8 +1,9 @@
 import { PubSub } from '@google-cloud/pubsub';
 
 import {BadRequestError, InternalServerError} from 'errors/apps-sdk-error';
-import { IQueue } from 'types/queue';
 import { Logger } from 'utils/logger';
+
+import type { IQueue } from 'types/queue';
 
 const logger = new Logger('Queue', { mondayInternal: true });
 

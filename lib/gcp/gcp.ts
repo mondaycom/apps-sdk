@@ -3,11 +3,13 @@ import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 
 import { InternalServerError } from 'errors/apps-sdk-error';
-import { GCP_SCOPES, GcpConnectionData, SignJwtResponse } from 'types/gcp';
+import { GCP_SCOPES } from 'types/gcp';
 import { isDefined } from 'types/guards';
-import { Token } from 'types/secure-storage';
 import { getMondayCodeContext, validateEnvironment } from 'utils/env';
 import { Logger } from 'utils/logger';
+
+import type { GcpConnectionData, SignJwtResponse } from 'types/gcp';
+import type { Token } from 'types/secure-storage';
 
 const logger = new Logger('SecureStorage', { mondayInternal: true });
 

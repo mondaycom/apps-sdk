@@ -1,4 +1,4 @@
-import { Token } from 'types/secure-storage';
+import type { Token } from 'types/secure-storage';
 
 export type SignJwtResponse = {
   signedJwt: Token,

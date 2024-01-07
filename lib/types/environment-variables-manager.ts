@@ -1,4 +1,4 @@
-import { JsonValue } from 'types/general';
+import type { JsonValue } from 'types/general';
 
 export type Options = {
   updateProcessEnv?: boolean

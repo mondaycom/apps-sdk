@@ -1,6 +1,7 @@
 import {BaseStorage} from 'lib/storage/base-storage';
 import { isDefined } from 'types/guards';
-import {
+
+import type {
   CounterOptions,
   CounterResponse,
   ErrorResponse,

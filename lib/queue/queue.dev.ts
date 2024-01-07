@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
 
 import { BadRequestError } from 'errors/apps-sdk-error';
-import { IQueue } from 'types/queue';
 import { localServerAddress } from 'utils/env';
+
+import type { IQueue } from 'types/queue';
 
 const devQueueSecret = '376a573e97497a294fd50e584fa3e507d1eab65abd2019709c0e8dc6b1893212'
 const devGenerateMessageId = () => {
@@ -14,9 +15,6 @@ const devGenerateMessageId = () => {
 }
 
 export class QueueDev implements IQueue {
-    constructor() {
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
     async publishMessage(message: (Uint8Array|string), options?: { topicName: string }): Promise<string> {
         const payload = (message.toString) ? message.toString() : message;

@@ -13,8 +13,9 @@ import appRoot from 'app-root-path';
 
 import { InternalServerError } from 'errors/apps-sdk-error';
 import { isDefined } from 'types/guards';
-import { ILocalStorageInstance } from 'types/secure-storage.local';
 import { Logger } from 'utils/logger';
+
+import type { ILocalStorageInstance } from 'types/secure-storage.local';
 
 const DEFAULT_DB_NAME = 'storage';
 

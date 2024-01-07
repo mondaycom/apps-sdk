@@ -1,11 +1,12 @@
 import { BadRequestError } from 'errors/apps-sdk-error';
-import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
-import { ISecureStorageInstance } from 'types/secure-storage';
-import { ILocalStorageInstance } from 'types/secure-storage.local';
 import { decrypt, encrypt } from 'utils/cipher';
 import { initDb } from 'utils/local-db';
 import { isObject } from 'utils/validations';
+
+import type { JsonValue } from 'types/general';
+import type { ISecureStorageInstance } from 'types/secure-storage';
+import type { ILocalStorageInstance } from 'types/secure-storage.local';
 
 const validateKey = (key: string) => {
   if (!isDefined(key)) {

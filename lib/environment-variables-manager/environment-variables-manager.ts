@@ -1,17 +1,18 @@
 import fs from 'fs';
 import * as process from 'process';
 
-import { JsonValue } from 'lib/types/general';
-import {
+import { isDefined } from 'types/guards';
+import { isLocalEnvironment } from 'utils/env';
+import { Logger } from 'utils/logger';
+import { snakeCase } from 'utils/string-manipulations';
+
+import type { JsonValue } from 'lib/types/general';
+import type {
   EnvironmentData,
   GetOptions,
   IEnvironmentVariablesManager,
   Options
 } from 'types/environment-variables-manager';
-import { isDefined } from 'types/guards';
-import { isLocalEnvironment } from 'utils/env';
-import { Logger } from 'utils/logger';
-import { snakeCase } from 'utils/string-manipulations';
 
 const logger = new Logger('EnvironmentVariablesManager', { mondayInternal: true });
 

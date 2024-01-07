@@ -1,10 +1,16 @@
 import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
 import { getGcpConnectionData, getGcpIdentityToken } from 'lib/gcp/gcp';
-import { RequestOptions } from 'types/fetch';
-import { GcpConnectionData } from 'types/gcp';
-import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
-import {
+import { getMondayCodeContext, validateEnvironment } from 'utils/env';
+import { fetchWrapper } from 'utils/fetch-wrapper';
+import { Logger } from 'utils/logger';
+import { TIME_IN_MILLISECOND } from 'utils/time-enum';
+import { isObject } from 'utils/validations';
+
+import type { RequestOptions } from 'types/fetch';
+import type { GcpConnectionData } from 'types/gcp';
+import type { JsonValue } from 'types/general';
+import type {
   AppId,
   ConnectionData,
   ISecureStorageInstance,
@@ -12,11 +18,6 @@ import {
   VaultBaseResponse,
   VaultGcpLoginResponse, VaultLookupResponse
 } from 'types/secure-storage';
-import { getMondayCodeContext, validateEnvironment } from 'utils/env';
-import { fetchWrapper } from 'utils/fetch-wrapper';
-import { Logger } from 'utils/logger';
-import { TIME_IN_MILLISECOND } from 'utils/time-enum';
-import { isObject } from 'utils/validations';
 
 const logger = new Logger('SecureStorage', { mondayInternal: true });
 const MIN_TOKEN_EXPIRE_TTL_HOURS = 0.5;

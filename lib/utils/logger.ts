@@ -1,7 +1,9 @@
 import { LocalLogger } from 'lib/logger/logger.local';
 import { isDefined } from 'types/guards';
-import { LogMethods, Options } from 'types/logger';
+import { LogMethods } from 'types/logger';
 import { isLocalEnvironment } from 'utils/env';
+
+import type { Options } from 'types/logger';
 
 const defaultOptions: Options = {
   mondayInternal: true

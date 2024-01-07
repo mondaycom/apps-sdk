@@ -1,6 +1,7 @@
 import { ForbiddenError } from 'errors/apps-sdk-error';
-import { MondayCodeContext } from 'types/env';
 import { isDefined } from 'types/guards';
+
+import type { MondayCodeContext } from 'types/env';
 
 export const isLocalEnvironment = () => !isDefined(process.env.K_SERVICE);
 
