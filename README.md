@@ -97,8 +97,6 @@ const secureStorage = new SecureStorage();
 
 - `key: string` - key to store the content for
 - `value: any` - value to store (must be serializable)
-  - If value is not an object it will be wrapped in an object with a key `value`
-  - If value is an object it will be stored as is
 
 ```typescript
 await secureStorage.set(key, value);
