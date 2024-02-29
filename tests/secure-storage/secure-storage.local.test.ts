@@ -38,7 +38,7 @@ describe('LocalSecureStorage', () => {
 
       expect(encryptSpy).toBeCalledWith(JSON.stringify({ value: undefined }));
     });
-    
+
     it(`should store a value which is not an object as an object with the key '${MONDAY_CODE_RESERVED_PRIMITIVES_KEY}'`, async () => {
       const encryptSpy = jest.spyOn(encryptionService, 'encrypt');
       const value = 'not an object';
@@ -76,7 +76,7 @@ describe('LocalSecureStorage', () => {
       const result = await localSecureStorage.get(MOCK_KEY);
       expect(result).toEqual(MOCK_VALUE);
     });
-    
+
     it('should return the value as is if it is not an object', async () => {
       const value = 'not an object';
       mockGet.mockImplementation(() =>
