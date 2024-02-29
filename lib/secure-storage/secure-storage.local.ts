@@ -1,4 +1,5 @@
 import { BadRequestError } from 'errors/apps-sdk-error';
+import { MONDAY_CODE_RESERVED_PRIMITIVES_KEY } from 'lib/secure-storage/secure-storage.consts';
 import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
 import { ISecureStorageInstance } from 'types/secure-storage';
@@ -34,11 +35,16 @@ export class LocalSecureStorage implements ISecureStorageInstance {
     }
     
     const stringifiedValue = decrypt(encryptedValue);
-    return JSON.parse(stringifiedValue) as T;
+    const valueAsObject = JSON.parse(stringifiedValue) as T;
+    if (valueAsObject?.[MONDAY_CODE_RESERVED_PRIMITIVES_KEY] !== undefined) {
+      return valueAsObject[MONDAY_CODE_RESERVED_PRIMITIVES_KEY] as T;
+    }
+    
+    return valueAsObject;
   }
   
   async set<T extends JsonValue>(key: string, value: T) {
-    const valueAsObject = isObject(value) ? value : { value };
+    const valueAsObject = isObject(value) ? value : { [MONDAY_CODE_RESERVED_PRIMITIVES_KEY]: value };
     
     validateKey(key);
     const stringifiedValue = JSON.stringify(valueAsObject);

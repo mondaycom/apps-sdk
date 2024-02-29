@@ -2,6 +2,8 @@
 import { LocalSecureStorage } from 'lib/secure-storage/secure-storage.local';
 import * as encryptionService from 'utils/cipher';
 
+import { MONDAY_CODE_RESERVED_PRIMITIVES_KEY } from '../../lib/secure-storage/secure-storage.consts';
+
 const MOCK_KEY = 'mock';
 const MOCK_VALUE = { mock: 'mock' };
 const MOCK_ENCRYPTED_VALUE = encryptionService.encrypt(JSON.stringify(MOCK_VALUE));
@@ -36,14 +38,14 @@ describe('LocalSecureStorage', () => {
 
       expect(encryptSpy).toBeCalledWith(JSON.stringify({ value: undefined }));
     });
-
-    it('should store a value which is not an object as an object with the key `value`', async () => {
+    
+    it(`should store a value which is not an object as an object with the key '${MONDAY_CODE_RESERVED_PRIMITIVES_KEY}'`, async () => {
       const encryptSpy = jest.spyOn(encryptionService, 'encrypt');
       const value = 'not an object';
 
       await localSecureStorage.set(MOCK_KEY, value);
 
-      expect(encryptSpy).toBeCalledWith(JSON.stringify({ value }));
+      expect(encryptSpy).toBeCalledWith(JSON.stringify({ [MONDAY_CODE_RESERVED_PRIMITIVES_KEY]: value }));
     });
 
     it('should fail for undefined key', async () => {
@@ -73,6 +75,15 @@ describe('LocalSecureStorage', () => {
       mockGet.mockImplementation(() => MOCK_STORED_DATA[MOCK_KEY]);
       const result = await localSecureStorage.get(MOCK_KEY);
       expect(result).toEqual(MOCK_VALUE);
+    });
+    
+    it('should return the value as is if it is not an object', async () => {
+      const value = 'not an object';
+      mockGet.mockImplementation(() =>
+        encryptionService.encrypt(JSON.stringify({ [MONDAY_CODE_RESERVED_PRIMITIVES_KEY]: value })),
+      );
+      const result = await localSecureStorage.get(MOCK_KEY);
+      expect(result).toEqual(value);
     });
   });
 

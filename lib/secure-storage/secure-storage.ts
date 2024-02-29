@@ -1,5 +1,6 @@
 import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
 import { getGcpConnectionData, getGcpIdentityToken } from 'lib/gcp/gcp';
+import { MONDAY_CODE_RESERVED_PRIMITIVES_KEY } from 'lib/secure-storage/secure-storage.consts';
 import { RequestOptions } from 'types/fetch';
 import { GcpConnectionData } from 'types/gcp';
 import { JsonValue } from 'types/general';
@@ -173,17 +174,21 @@ export class SecureStorage implements ISecureStorageInstance {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
     const result = await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'GET' });
-    if (!isDefined(result?.data)) {
+    if (!isDefined(result) || !isDefined(result?.data)) {
       return null;
     }
     
-    return result?.data as T;
+    if (result.data?.[MONDAY_CODE_RESERVED_PRIMITIVES_KEY]) {
+      return result.data[MONDAY_CODE_RESERVED_PRIMITIVES_KEY] as T;
+    }
+    
+    return result.data as T;
   }
   
   async set<T extends JsonValue>(key: string, value: T) {
     this.connectionData = await authenticate(this.connectionData);
     const fullPath = generateCrudPath(key, this.connectionData.id);
-    const formalizedValue = isObject(value) ? value : { value };
+    const formalizedValue = isObject(value) ? value : { [MONDAY_CODE_RESERVED_PRIMITIVES_KEY]: value };
     await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, {
       method: 'PUT',
       body: { data: formalizedValue }
