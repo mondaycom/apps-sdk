@@ -145,6 +145,7 @@ const authenticate = async (connectionData: ConnectionData): Promise<ConnectionD
   const tokenTtlInHours = ((new Date(expireTime)).getTime() - (new Date()).getTime()) / TIME_IN_MILLISECOND.HOUR;
   const ttlPassedThreshold = tokenTtlInHours <= MIN_TOKEN_EXPIRE_TTL_HOURS;
   if (ttlPassedThreshold) {
+    logger.info(`[authenticate] TTL PASSED ${JSON.stringify({ tokenTtlInHours, expireTime })}`);
     return await getConnectionData(connectionData);
   }
   
@@ -156,24 +157,25 @@ const authenticate = async (connectionData: ConnectionData): Promise<ConnectionD
   return { token, expireTime, id, identityToken };
 };
 
+let connectionData: ConnectionData;
+
 export class SecureStorage implements ISecureStorageInstance {
-  private connectionData!: ConnectionData;
   
   constructor() {
     validateEnvironment();
   }
   
   async delete(key: string) {
-    this.connectionData = await authenticate(this.connectionData);
-    const fullPath = generateCrudPath(key, this.connectionData.id);
-    await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'DELETE' });
+    connectionData = await authenticate(connectionData);
+    const fullPath = generateCrudPath(key, connectionData.id);
+    await secureStorageFetch<VaultBaseResponse>(fullPath, connectionData, { method: 'DELETE' });
     return true;
   }
   
   async get<T>(key: string) {
-    this.connectionData = await authenticate(this.connectionData);
-    const fullPath = generateCrudPath(key, this.connectionData.id);
-    const result = await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, { method: 'GET' });
+    connectionData = await authenticate(connectionData);
+    const fullPath = generateCrudPath(key, connectionData.id);
+    const result = await secureStorageFetch<VaultBaseResponse>(fullPath, connectionData, { method: 'GET' });
     if (!isDefined(result) || !isDefined(result?.data)) {
       return null;
     }
@@ -186,10 +188,10 @@ export class SecureStorage implements ISecureStorageInstance {
   }
   
   async set<T extends JsonValue>(key: string, value: T) {
-    this.connectionData = await authenticate(this.connectionData);
-    const fullPath = generateCrudPath(key, this.connectionData.id);
+    connectionData = await authenticate(connectionData);
+    const fullPath = generateCrudPath(key, connectionData.id);
     const formalizedValue = isObject(value) ? value : { [MONDAY_CODE_RESERVED_PRIMITIVES_KEY]: value };
-    await secureStorageFetch<VaultBaseResponse>(fullPath, this.connectionData, {
+    await secureStorageFetch<VaultBaseResponse>(fullPath, connectionData, {
       method: 'PUT',
       body: { data: formalizedValue }
     });
