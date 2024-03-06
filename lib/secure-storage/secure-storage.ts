@@ -20,7 +20,7 @@ import { TIME_IN_MILLISECOND } from 'utils/time-enum';
 import { isObject } from 'utils/validations';
 
 const logger = new Logger('SecureStorage', { mondayInternal: true });
-const MIN_TOKEN_EXPIRE_TTL_HOURS = 0.5;
+const MIN_TOKEN_EXPIRE_TTL_HOURS = 0.05;
 
 const secureStorageFetch = async <T>(path: string, connectionData: ConnectionData, options: RequestOptions): Promise<T | undefined> => {
   const { method = 'GET', body } = options;
