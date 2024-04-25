@@ -249,17 +249,29 @@ mondayClient.setApiVersion('2023-10');
 
 ```typescript
 const query = `query {
-        items(ids: [${itemId}]) {
-          column_values(ids: ["${columnId}"]) {
+        items(ids: [1234]) {
+          column_values(ids: ["text1"]) {
             text
           }
         }
       }`;
 
-logger.debug(`getApiToGetColumnValue->query:
-    ${query}
-    `);
 const response = await mondayClient.api(query);
+```
+
+```typescript
+const query = `query ($item_id: ID!, $column_id: String!){
+        items(ids: [$item_id]) {
+          column_values(ids: [$column_id]) {
+            text
+          }
+        }
+      }`;
+const variables = {
+  item_id: 1234,
+  $column_id: 'text1',
+};
+const response = await mondayClient.api(query, { variables });
 ```
 
 ```typescript
@@ -273,10 +285,10 @@ const query = `mutation ($value: String, $board_id: ID!, $item_id: ID, $column_i
         }
   }`;
 const variables = {
-  board_id: boardId,
-  item_id: itemId,
-  column_id: columnId,
-  value: value.toString(),
+  board_id: 12345,
+  item_id: 423432,
+  column_id: 'status',
+  value: 'new value...',
 };
 const response = await await mondayClient.api(query, { variables });
 ```
