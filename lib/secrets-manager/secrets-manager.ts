@@ -50,6 +50,7 @@ export class SecretsManager implements IKeyValueManager {
   constructor() {
     this.initSecrets();
     if (isLocalEnvironment()) {
+      // TODO: should use process.env as the source for secrets in local env?
       logger.info('[SecretsManager] Running in development environment, Using process.env', { mondayInternal: false });
     }
   }
@@ -63,6 +64,7 @@ export class SecretsManager implements IKeyValueManager {
 
   private initSecrets() {
     if (isLocalEnvironment()) {
+      // TODO: should use process.env as the source for secrets in local env?
       this.cachedSecretsData = process.env as KeyValueData;
       return;
     }
