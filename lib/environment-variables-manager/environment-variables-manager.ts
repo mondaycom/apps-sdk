@@ -16,7 +16,7 @@ import { snakeCase } from 'utils/string-manipulations';
 const logger = new Logger('EnvironmentVariablesManager', { mondayInternal: true });
 
 const readEnvironmentData = () => {
-  const environmentDataFileName = process?.env?.SECRET_NAME;
+  const environmentDataFileName = process?.env?.SECRET_NAME; // "monday_secret" // fixme: remove comment
   if (!isDefined(environmentDataFileName)) {
     logger.error('[EnvironmentVariablesManager] Environment file name is not defined');
     return;

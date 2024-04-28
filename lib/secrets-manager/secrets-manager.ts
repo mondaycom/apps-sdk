@@ -15,7 +15,11 @@ const logger = new Logger('SecretsManager', { mondayInternal: true });
 
 // TODO: write tests, just like env-var-manager has
 // TODO: add readme for how to use this
-// TODO: bump version
+// TODO: bump version (consider open PRs that also bump version)
+
+// TODO: 2 solutions for uploading package:
+//  1. push a commit with [beta] and add beta to the package.json version - install it from the app
+//  2. copy the folder locally to the app and point relatively from the dependencies there
 
 const readSecretsData = () => {
   const secretsDataFileName = process?.env?.SECRET_NAME; // TODO this should change for either secrets, or env-vars
