@@ -1,1 +1,0 @@
-export declare const MONDAY_CODE_RESERVED_PRIMITIVES_KEY = "PRIM__MON__CODE_";
