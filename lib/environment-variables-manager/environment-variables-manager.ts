@@ -1,14 +1,9 @@
 import fs from 'fs';
 import * as process from 'process';
 
-import { JsonValue } from 'lib/types/general';
-import {
-  GetOptions,
-  IKeyValueManager,
-  KeyValueData,
-  Options
-} from 'types/environment-variables-manager';
+import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
+import { GetOptions, IKeyValueManager, KeyValueData, Options } from 'types/key-value-manager';
 import { isLocalEnvironment } from 'utils/env';
 import { Logger } from 'utils/logger';
 import { snakeCase } from 'utils/string-manipulations';
