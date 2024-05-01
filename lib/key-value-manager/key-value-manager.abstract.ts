@@ -4,7 +4,6 @@ import * as process from 'process';
 import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
 import { GetOptions, KeyValueData } from 'types/key-value-manager';
-import { isLocalEnvironment } from 'utils/env';
 import { Logger } from 'utils/logger';
 
 export abstract class KeyValueManager {
@@ -49,10 +48,10 @@ export abstract class KeyValueManager {
   }
 
   protected initData(): void {
-    if (isLocalEnvironment()) {
-      this.cachedData = process.env as KeyValueData;
-      return;
-    }
+    // if (isLocalEnvironment()) { // FIXME: revert
+    //   this.cachedData = process.env as KeyValueData;
+    //   return;
+    // }
 
     this.cachedData = this.readData();
     if (!isDefined(this.cachedData)) {
