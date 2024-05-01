@@ -1,8 +1,8 @@
 import { KeyValueManager } from 'lib/key-value-manager/key-value-manager.abstract';
-import { Options } from 'types/key-value-manager';
+import { IKeyValueManager, Options } from 'types/key-value-manager';
 import { snakeCase } from 'utils/string-manipulations';
 
-export class EnvironmentVariablesManager extends KeyValueManager {
+export class EnvironmentVariablesManager extends KeyValueManager implements IKeyValueManager {
   private readonly shouldUpdateProcessEnv: boolean;
 
   constructor(options?: Options) {

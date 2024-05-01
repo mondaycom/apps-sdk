@@ -3,11 +3,11 @@ import * as process from 'process';
 
 import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
-import { GetOptions, IKeyValueManager, KeyValueData } from 'types/key-value-manager';
+import { GetOptions, KeyValueData } from 'types/key-value-manager';
 import { isLocalEnvironment } from 'utils/env';
 import { Logger } from 'utils/logger';
 
-export abstract class KeyValueManager implements IKeyValueManager {
+export abstract class KeyValueManager {
   protected cachedData?: KeyValueData;
   protected readonly logger: Logger;
   protected readonly tag: string;
