@@ -7,7 +7,7 @@ export class EnvironmentVariablesManager extends KeyValueManager implements IKey
 
   constructor(options?: Options) {
     const dataFileName = process.env.SECRET_NAME!;
-    super('EnvironmentVariablesManager', dataFileName, '/secrets');
+    super('EnvironmentVariablesManager', dataFileName, '/Users/maorba/secrets'); // FIXME: revert
     this.shouldUpdateProcessEnv = Boolean(options?.updateProcessEnv);
     this.initData();
   }
