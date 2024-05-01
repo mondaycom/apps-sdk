@@ -26,8 +26,8 @@ export abstract class KeyValueManager implements IKeyValueManager {
   }
 
   protected readData(): KeyValueData | undefined {
-    const isSecretsFileExists = fs.existsSync(this.dataFilePath);
-    if (!isSecretsFileExists) {
+    const isDataFileExists = fs.existsSync(this.dataFilePath);
+    if (!isDataFileExists) {
       this.logger.error(`[${this.tag}] Data file does not exist in path`);
       return;
     }
