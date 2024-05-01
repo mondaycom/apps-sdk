@@ -7,7 +7,7 @@ export class EnvironmentVariablesManager extends KeyValueManager {
 
   constructor(options?: Options) {
     const dataFileName = process.env.SECRET_NAME!;
-    super('EnvironmentVariablesManager', dataFileName, 'secrets');
+    super('EnvironmentVariablesManager', dataFileName, '/secrets');
     this.shouldUpdateProcessEnv = Boolean(options?.updateProcessEnv);
     this.initData();
   }

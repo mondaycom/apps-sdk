@@ -5,8 +5,8 @@ import { KeyValueManager } from 'lib/key-value-manager/key-value-manager.abstrac
 
 export class SecretsManager extends KeyValueManager {
   constructor() {
-    const dataFileName = process.env.SECRET_NAME!; // TODO this should change for secrets (both file and folder name)
-    super('SecretsManager', dataFileName, 'secrets');
+    const dataFileName = process.env.SECRET_NAME!;
+    super('SecretsManager', dataFileName, '/secrets-v2');
     this.initData();
   }
 
