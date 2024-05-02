@@ -13,6 +13,7 @@ export class LocalLogger {
   constructor(private tag: string) {
     this.logger = pino({
       name: tag,
+      level: 'debug',
       transport: {
         target: 'pino-pretty',
         options: {
