@@ -25,12 +25,12 @@ describe('SecretsManager', () => {
   describe('monday-code environment', () => {
     beforeEach(() => {
       mockIsLocalEnvironment.mockReturnValue(false);
-      process.env.SECRET_NAME = 'secret'; // TODO: change to new value
+      process.env.SECRET_NAME = 'secret';
       secretsManager = new SecretsManager();
     });
 
     afterEach(() => {
-      process.env.SECRET_NAME = undefined; // TODO: change to new value
+      process.env.SECRET_NAME = undefined;
     });
 
     describe('getKeys', () => {
@@ -124,15 +124,14 @@ describe('SecretsManager', () => {
   });
 
   describe('local environment', () => {
-    // TODO: should use process.env as the source for secrets in local env? if not, then what? otherwise, all these tests are invalid
     beforeEach(() => {
       mockIsLocalEnvironment.mockReturnValue(true);
-      process.env.SECRET_NAME = 'secret'; // TODO: change to new value
+      process.env.SECRET_NAME = 'secret';
       secretsManager = new SecretsManager();
     });
 
     afterEach(() => {
-      process.env.SECRET_NAME = undefined; // TODO: change to new value
+      process.env.SECRET_NAME = undefined;
     });
 
     describe('getKeys', () => {
