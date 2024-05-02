@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn lint:fix
+yarn lint-fix
 yarn prettier:fix
 
 yarn prepublish-and-build

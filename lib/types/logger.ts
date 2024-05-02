@@ -17,5 +17,3 @@ export enum LocalLoggerMethods {
   DEBUG = 'debug',
   WARNING = 'warn'
 }
-
-console.warn();
