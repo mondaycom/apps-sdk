@@ -22,7 +22,9 @@
     "build:esm": "tsc -p ./tsconfig.esm.json && tsc-alias -f -p tsconfig.esm.json",
     "build:cjs": "tsc -p ./tsconfig.cjs.json && tsc-alias -f -p ./tsconfig.cjs.json",
     "build": "rm -rf dist/ && yarn prettier:fix && yarn lint-fix && ./scripts/create-minified-package-json.sh && yarn build:esm && yarn build:cjs && ./scripts/build-package-json",
-    "prepublish-and-build": "yarn install --frozen-lockfile && yarn build"
+    "prepublish-and-build": "yarn install --frozen-lockfile && yarn build",
+    "circular-dependency-check": "madge -c .",
+    "prepare": "husky install"
   },
   "files": [
     "dist",
@@ -57,6 +59,7 @@
     "eslint-plugin-n": "^15.6.1",
     "husky": "^8.0.3",
     "jest": "^27.3.1",
+    "madge": "^7.0.0",
     "prettier": "^2.8.4",
     "ts-jest": "^27.0.5",
     "tsc-alias": "^1.8.4",
