@@ -18,7 +18,7 @@ describe('SecretsManager', () => {
   const mockObjectValue = { [mockKey]: mockValue };
   const mockStoredData = {
     [mockKey]: mockValue,
-    [mockObjectKey]: mockObjectValue
+    [mockObjectKey]: mockObjectValue,
   };
   let secretsManager: SecretsManager;
 

@@ -1,6 +1,6 @@
 import { LocalLogger } from 'lib/logger/logger.local';
 import { isDefined } from 'types/guards';
-import { LogMethods, Options } from 'types/logger';
+import { LocalLoggerMethods, LogMethods, Options } from 'types/logger';
 import { isLocalEnvironment } from 'utils/env';
 
 const defaultOptions: Options = {
@@ -30,7 +30,7 @@ export class Logger {
     
     if (isDefined(this.localLogger)) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      this.localLogger[severity?.toLowerCase()]?.(message, { ...logOptions?.error && { error: logOptions.error } });
+      this.localLogger[LocalLoggerMethods[severity]]?.(message, { ...logOptions?.error && { error: logOptions.error } });
     } else {
       console.log(JSON.stringify({
         severity,
