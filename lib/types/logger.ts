@@ -11,4 +11,9 @@ export enum LogMethods {
   WARNING = 'WARNING'
 }
 
-console.warn();
+export enum LocalLoggerMethods {
+  INFO = 'info',
+  ERROR = 'error',
+  DEBUG = 'debug',
+  WARNING = 'warn'
+}
