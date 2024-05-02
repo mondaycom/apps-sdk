@@ -28,7 +28,11 @@ export class LocalLogger {
   }
   
   error(message: string, options?: Options) {
-    this.logger.error(message, options);
+    if (options?.error) {
+      this.logger.error(options.error, message);
+    } else {
+      this.logger.error(message);
+    }
   }
   
   warn(message: string) {
