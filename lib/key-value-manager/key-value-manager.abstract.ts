@@ -72,14 +72,14 @@ export abstract class KeyValueManager {
     return Object.keys(this.cachedData);
   }
 
-  get(key: string, options?: GetOptions): JsonValue {
+  get(key: string, options?: GetOptions): JsonValue | undefined {
     this.initDataIfNeeded(options);
     if (!isDefined(this.cachedData)) {
       this.logger.error(`[${this.tag}.get] There is an issue with loading data for key`, { mondayInternal: false });
       return null;
     }
 
-    return this.cachedData[key] || process.env[key] as JsonValue;
+    return this.cachedData[key] !== undefined ? this.cachedData[key] : process.env[key];
   }
 }
 
