@@ -13,5 +13,5 @@ export type KeyValueData = Record<string, JsonValue>
 export type IKeyValueManager = {
   getKeys(_options?: GetOptions): Array<string>;
 
-  get(_key: string, _options?: GetOptions): JsonValue;
+  get(_key: string, _options?: GetOptions): JsonValue | undefined;
 }
