@@ -172,12 +172,7 @@ const latestKeys = envManager.getKeys();
 <summary>Read secrets in monday-code projects</summary>
 
 - This is the way to **read** secrets for your app in a project deployed `<monday-code/>`.
-- Secrets are set via [@mondaycom/apps-cli](https://www.npmjs.com/package/@mondaycom/apps-cli)
-  ```shell
-  $ mapps code:secrets -m set -k <key> -v <value>
-  ```
-- These secrets are stored in a secure manner and can be used to store sensitive data (i.e. DB connection string, API keys, etc.)
-- The secrets are on the **app** level which means that they are accessible by all the **versions** of the app
+- Secrets are set via the Secrets tab in the Dev Center UI in the monday code section
 
 ### Secrets manager API
 
