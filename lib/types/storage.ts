@@ -1,3 +1,5 @@
+import { JsonValue } from 'types/general';
+
 export type Token = string;
 export enum Period {
   DAILY='DAILY',
@@ -17,11 +19,15 @@ export type CounterOptions = {
   renewalDate?: Date
 }
 
-export type GetResponse = {
+export type GetServerResponse<T extends JsonValue> = {
   version?: string
+  value: T | null
+}
+
+export type GetResponse<T extends JsonValue> = {
   success: boolean
   error?: string
-}
+} & GetServerResponse<T>
 
 
 export type CounterResponse = {
@@ -46,7 +52,7 @@ export type ErrorResponse = {
 } | undefined | null
 
 export type IStorageInstance = {
-  set: <T extends object>(key: string, value: T, options?: Options) => Promise<SetResponse>
-  get: (key: string, options?: Options) => Promise<GetResponse>
+  set: <T extends JsonValue>(key: string, value: T, options?: Options) => Promise<SetResponse>
+  get: <T extends JsonValue>(key: string, options?: Options) => Promise<GetResponse<T>>
   delete: (key: string, options?: Options) => Promise<DeleteResponse>
 }

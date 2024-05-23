@@ -8,10 +8,10 @@ export type GetOptions = {
   invalidate?: boolean
 }
 
-export type EnvironmentData = Record<string, JsonValue>
+export type KeyValueData = Record<string, JsonValue>
 
-export type IEnvironmentVariablesManager = {
+export type IKeyValueManager = {
   getKeys(_options?: GetOptions): Array<string>;
-  
-  get(_key: string, _options?: GetOptions): JsonValue;
+
+  get(_key: string, _options?: GetOptions): JsonValue | undefined;
 }

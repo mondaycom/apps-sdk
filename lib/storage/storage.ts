@@ -1,9 +1,12 @@
 import {BaseStorage} from 'lib/storage/base-storage';
+import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
 import {
   CounterOptions,
   CounterResponse,
   ErrorResponse,
+  GetResponse,
+  GetServerResponse,
   IStorageInstance,
   Options,
   Period,
@@ -31,14 +34,16 @@ export class Storage extends BaseStorage implements IStorageInstance {
       return { success: true };
     }
   }
-
-  async get<T>(key: string, options: Options = {}) {
-    const result = await this.storageFetch<T>(key,{ method: 'GET' }, options);
+  
+  async get<T extends JsonValue>(key: string, options: Options = {}): Promise<GetResponse<T>> {
+    const result = await this.storageFetch<GetServerResponse<T>>(key, { method: 'GET' }, options);
     if (!isDefined(result)) {
       return { success: false, value: null };
     }
-
-    return { success: true, ...result };
+    
+    const { version, value } = result;
+    
+    return { success: true, value, version };
   }
 
   async set(key: string, value, options: Options = {}) {

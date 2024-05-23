@@ -97,8 +97,6 @@ const secureStorage = new SecureStorage();
 
 - `key: string` - key to store the content for
 - `value: any` - value to store (must be serializable)
-  - If value is not an object it will be wrapped in an object with a key `value`
-  - If value is an object it will be stored as is
 
 ```typescript
 await secureStorage.set(key, value);
@@ -128,7 +126,6 @@ await secureStorage.delete(key);
   ```shell
   $ mapps code:env -m set -k <key> -v <value>
   ```
-- This environment variables are stored in a secure manner and can be used to store sensitive data (i.e. DB connection string, API keys, etc.)
 - The environment variables are on the **app** level which means that they are accessible by all the **versions** of the app
 
 ### Environment variables manager API
@@ -165,6 +162,48 @@ const cachedKeys = envManager.getKeys({ invalidate: false });
 
 // Get all environment variables keys
 const latestKeys = envManager.getKeys();
+```
+
+</details>
+
+## Secrets manager
+
+<details>
+<summary>Read secrets in monday-code projects</summary>
+
+- This is the way to **read** secrets for your app in a project deployed `<monday-code/>`.
+- Secrets are set via the Secrets tab in the Dev Center UI in the monday code section
+
+### Secrets manager API
+
+There are two methods exposed to manage the secrets - `get` and `getKeys`
+
+#### initialize
+
+```typescript
+import { SecretsManager } from '@mondaycom/apps-sdk';
+
+const secretsManager = new SecretsManager();
+```
+
+#### get
+
+```typescript
+// Get cached secrets
+const cachedValue = secretsManager.get(key, { invalidate: false });
+
+// Get the latest version of a secret
+const latestValue = secretsManager.get(key);
+```
+
+#### getKeys
+
+```typescript
+// Get all cached secrets keys
+const cachedKeys = secretsManager.getKeys({ invalidate: false });
+
+// Get all secrets keys
+const latestKeys = secretsManager.getKeys();
 ```
 
 </details>
