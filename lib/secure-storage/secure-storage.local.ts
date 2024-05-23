@@ -1,7 +1,6 @@
-import { JsonValue } from 'types/general';
-
 import { BadRequestError } from 'errors/apps-sdk-error';
 import { MONDAY_CODE_RESERVED_PRIMITIVES_KEY } from 'lib/secure-storage/secure-storage.consts';
+import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
 import { ISecureStorageInstance } from 'types/secure-storage';
 import { ILocalStorageInstance } from 'types/secure-storage.local';
