@@ -1,4 +1,6 @@
 import { PubSub } from '@google-cloud/pubsub';
+import { Compute, GoogleAuth } from 'google-auth-library';
+import { JSONClient } from 'google-auth-library/build/src/auth/googleauth';
 
 import {BadRequestError, InternalServerError} from 'errors/apps-sdk-error';
 import { IQueue } from 'types/queue';
@@ -9,7 +11,9 @@ const logger = new Logger('Queue', { mondayInternal: true });
 export class QueueProd implements IQueue {
     private pubSubClient: PubSub;
     constructor() {
-        this.pubSubClient = new PubSub();
+            const computeClient = new Compute();
+                const auth = new GoogleAuth({authClient: computeClient}) as unknown as GoogleAuth<JSONClient>;
+                this.pubSubClient = new PubSub({auth});   
     }
 
     async publishMessage(message: (Uint8Array|string), options?: { topicName: string }): Promise<string> {

@@ -1,9 +1,10 @@
+import { JsonValue } from 'types/general';
+
 import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
 import { getGcpConnectionData, getGcpIdentityToken } from 'lib/gcp/gcp';
 import { MONDAY_CODE_RESERVED_PRIMITIVES_KEY } from 'lib/secure-storage/secure-storage.consts';
 import { RequestOptions } from 'types/fetch';
 import { GcpConnectionData } from 'types/gcp';
-import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
 import {
   AppId,
