@@ -1,7 +1,3 @@
-<h3 style="color:red"><b>Public access to this SDK is currently restricted but will become available in the next few months</b></h3>
-
----
-
 # apps-sdk
 
 This sdk is used to leverage some of the capabilities exposed via `<monday-code />`:
