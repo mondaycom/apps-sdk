@@ -1,6 +1,5 @@
-import { JsonValue } from 'types/general';
-
 import {BaseStorage} from 'lib/storage/base-storage';
+import { JsonValue } from 'types/general';
 import { isDefined } from 'types/guards';
 import {
   CounterOptions,
