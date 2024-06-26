@@ -13,6 +13,10 @@ jobs:
           node-version: 18.12.1
           registry-url: https://registry.npmjs.org/
       - run: yarn prepublish-and-build
+      - name: Validate version
+        run: |
+          version=$(jq -r .version package.json)
+          echo $version | grep -q "\-beta"
       - run: npm publish --tag beta
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
