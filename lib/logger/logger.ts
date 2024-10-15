@@ -1,10 +1,7 @@
+import { ErrorLogOptions, ILogger } from 'types/logger';
 import { Logger as InternalLogger } from 'utils/logger';
 
-type Options = {
-  error?: Error
-}
-
-export class Logger {
+export class Logger implements ILogger {
   private internalLogger: InternalLogger;
   
   /**
@@ -18,7 +15,7 @@ export class Logger {
     this.internalLogger.debug(message);
   }
   
-  error(message: string, options?: Options) {
+  error(message: string, options?: ErrorLogOptions) {
     this.internalLogger.error(message, options);
   }
   

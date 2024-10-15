@@ -14,3 +14,11 @@ export {
   SecretsManager,
   Queue
 };
+
+// Types export
+export { JsonValue } from 'types/general';
+export { ISecureStorageInstance } from 'types/secure-storage';
+export { IStorageInstance, Options as StorageOptions, GetResponse as StorageGetResponse, SetResponse as StorageSetResponse, DeleteResponse as StorageDeleteResponse } from 'types/storage';
+export { IKeyValueManager, GetOptions as KeyValueManagerGetOptions } from 'types/key-value-manager';
+export { ILogger, ErrorLogOptions } from 'types/logger';
+export { IQueue } from 'types/queue';
