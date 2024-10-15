@@ -4,6 +4,17 @@ export type Options = {
   error?: Error
 }
 
+export type ErrorLogOptions = {
+  error?: Error
+}
+
+export type ILogger = {
+  info: (message: string) => void;
+  debug: (message: string) => void;
+  warn: (message: string) => void;
+  error: (message: string, options?: ErrorLogOptions) => void;
+}
+
 export enum LogMethods {
   INFO = 'INFO',
   ERROR = 'ERROR',
