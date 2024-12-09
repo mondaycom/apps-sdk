@@ -1,10 +1,11 @@
 import { JsonValue } from 'types/general';
 
 export type Token = string;
+
 export enum Period {
-  DAILY='DAILY',
-  MONTHLY='MONTHLY',
-  YEARLY='YEARLY'
+  DAILY = 'DAILY',
+  MONTHLY = 'MONTHLY',
+  YEARLY = 'YEARLY'
 }
 
 
@@ -19,6 +20,10 @@ export type CounterOptions = {
   renewalDate?: Date
 }
 
+export type SearchOptions = {
+  cursor?: string
+}
+
 export type GetServerResponse<T extends JsonValue> = {
   version?: string
   value: T | null
@@ -29,6 +34,20 @@ export type GetResponse<T extends JsonValue> = {
   error?: string
 } & GetServerResponse<T>
 
+export type SearchEntity<T extends JsonValue> = {
+  key: string
+  value: T
+  backendOnly: boolean
+}
+
+export type SearchServerResponse<T extends JsonValue> = {
+  records: Array<SearchEntity<T>> | null
+}
+
+export type SearchResponse<T extends JsonValue> = {
+  success: boolean
+  error?: string
+} & SearchServerResponse<T>
 
 export type CounterResponse = {
   message: string
