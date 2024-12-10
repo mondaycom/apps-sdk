@@ -46,7 +46,11 @@ export class Storage extends BaseStorage implements IStorageInstance {
       return { success: false, records: null };
     }
 
-    return { success: true, records: result.records };
+    const response: SearchResponse<T> = {success: true, records: result.records};
+    if (result.cursor){
+      response.cursor = result.cursor;
+    }
+    return response;
   }
 
   async get<T extends JsonValue>(key: string, options: Options = {}): Promise<GetResponse<T>> {
