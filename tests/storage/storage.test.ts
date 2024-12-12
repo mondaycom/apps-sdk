@@ -35,7 +35,7 @@ describe('Storage', () => {
       async (term: string, cursor: object, expectedUrl: string) => {
         // Arrange
         const storage = new Storage(FAKE_TOKEN);
-
+        // Mocking the storage service api
         (fetch as unknown as jest.Mock).mockResolvedValue({
           json: () => ({ records: [{ key: 'aaa', value: 1, backendOnly: false }] }),
           status: StatusCodes.OK,
@@ -55,7 +55,7 @@ describe('Storage', () => {
     it('Should throw internal server error when an unexpected error occurs', async () => {
       // Arrange
       const storage = new Storage(FAKE_TOKEN);
-
+      // Mocking the storage service api
       (fetch as unknown as jest.Mock).mockImplementation(() => {
         throw new Error();
       });
