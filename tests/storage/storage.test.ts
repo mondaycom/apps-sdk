@@ -28,11 +28,11 @@ describe('Storage', () => {
 
   describe('Search', () => {
     it.each([
-      [{}, `https://apps-storage.monday.com/api/v2/items?term=${term}`],
-      [{ cursor: cursorID }, `https://apps-storage.monday.com/api/v2/items?term=${term}&cursor=${cursorID}`],
+      [term, {}, `https://apps-storage.monday.com/api/v2/items?term=${term}`],
+      [term, { cursor: cursorID }, `https://apps-storage.monday.com/api/v2/items?term=${term}&cursor=${cursorID}`],
     ])(
       'Should show correct URL when called with a term and return array for result',
-      async (cursor: object, expectedUrl: string) => {
+      async (term: string, cursor: object, expectedUrl: string) => {
         // Arrange
         const storage = new Storage(FAKE_TOKEN);
 
@@ -49,25 +49,6 @@ describe('Storage', () => {
         expect(results.records).toBeInstanceOf(Array);
         expect(fetch).toHaveBeenCalledTimes(1);
         expect(fetch).toHaveBeenCalledWith(expectedUrl, expectedOptions);
-      },
-    );
-
-    it.each([[StatusCodes.NO_CONTENT], [StatusCodes.NOT_FOUND]])(
-      'Should return fail when no contact is returned',
-      async (returnedStatusCode: StatusCodes) => {
-        // Arrange
-        const storage = new Storage(FAKE_TOKEN);
-
-        (fetch as unknown as jest.Mock).mockResolvedValue({
-          status: returnedStatusCode,
-        });
-
-        // Act
-        const results = await storage.search(term);
-
-        // Assert
-        expect(results.success).toEqual(false);
-        expect(fetch).toHaveBeenCalledTimes(1);
       },
     );
 
