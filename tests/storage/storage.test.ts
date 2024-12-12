@@ -1,6 +1,24 @@
+import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
+import fetch from 'node-fetch';
+
 import { Storage } from 'lib/storage/storage';
 
+import { InternalServerError } from '../../lib/errors/apps-sdk-error';
+
+jest.mock('node-fetch');
+
 const FAKE_TOKEN = 'fake token';
+const expectedOptions = {
+  headers: {
+    Authorization: FAKE_TOKEN,
+    'Content-Type': 'application/json',
+    'User-Agent': 'monday-apps-sdk',
+  },
+  method: 'GET',
+};
+
+const term = 'mySearchTerm';
+const cursorID = 'myCursorId';
 
 describe('Storage', () => {
   afterEach(() => {
@@ -10,44 +28,60 @@ describe('Storage', () => {
 
   describe('Search', () => {
     it.each([
-      [
-        [
-          {
-            key: 'aaa',
-            value: 1,
-            backendOnly: false,
-          },
-        ],
-      ],
-      [
-        [
-          {
-            key: 'aaab',
-            value: 2,
-            backendOnly: false,
-          },
-          {
-            key: 'aaac',
-            value: 3,
-            backendOnly: false,
-          },
-        ],
-      ],
-    ])('Should return records matching the searched term', async records => {
+      [{}, `https://apps-storage.monday.com/api/v2/items?term=${term}`],
+      [{ cursor: cursorID }, `https://apps-storage.monday.com/api/v2/items?term=${term}&cursor=${cursorID}`],
+    ])(
+      'Should show correct URL when called with a term and return array for result',
+      async (cursor: object, expectedUrl: string) => {
+        // Arrange
+        const storage = new Storage(FAKE_TOKEN);
+
+        (fetch as unknown as jest.Mock).mockResolvedValue({
+          json: () => ({ records: [{ key: 'aaa', value: 1, backendOnly: false }] }),
+          status: StatusCodes.OK,
+        });
+
+        // Act
+        const results = await storage.search(term, cursor);
+
+        // Assert
+        expect(results.success).toEqual(true);
+        expect(results.records).toBeInstanceOf(Array);
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(fetch).toHaveBeenCalledWith(expectedUrl, expectedOptions);
+      },
+    );
+
+    it.each([[StatusCodes.NO_CONTENT], [StatusCodes.NOT_FOUND]])(
+      'Should return fail when no contact is returned',
+      async (returnedStatusCode: StatusCodes) => {
+        // Arrange
+        const storage = new Storage(FAKE_TOKEN);
+
+        (fetch as unknown as jest.Mock).mockResolvedValue({
+          status: returnedStatusCode,
+        });
+
+        // Act
+        const results = await storage.search(term);
+
+        // Assert
+        expect(results.success).toEqual(false);
+        expect(fetch).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it('Should throw internal server error when an unexpected error occurs', async () => {
       // Arrange
       const storage = new Storage(FAKE_TOKEN);
-      const term = 'aaa';
 
-      //overriding protected method only in tests
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      jest.spyOn(storage, 'storageFetchV2').mockResolvedValue({ records, term, accountId: 1 });
+      (fetch as unknown as jest.Mock).mockImplementation(() => {
+        throw new Error();
+      });
 
-      // Act
-      const results = await storage.search(term);
-
-      // Assert
-      expect(results).toEqual({ success: true, records });
+      // Act + Assert
+      await expect(async () => await storage.search(term)).rejects.toThrow(InternalServerError);
+      expect(fetch).toHaveBeenCalledTimes(1);
     });
   });
 });

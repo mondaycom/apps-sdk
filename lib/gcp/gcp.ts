@@ -10,7 +10,7 @@ import { getMondayCodeContext, validateEnvironment } from 'utils/env';
 import { Logger } from 'utils/logger';
 
 const logger = new Logger('SecureStorage', { mondayInternal: true });
-const googleAuthClient = new GoogleAuth({authClient: new Compute()});
+const googleAuthClient = new GoogleAuth({ authClient: new Compute() });
 googleAuthClient.defaultScopes = [GCP_SCOPES.CLOUD_PLATFORM];
 
 const generateJwtSigningUrl = (serviceAccountEmail: string) => `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccountEmail}:signJwt`;

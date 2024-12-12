@@ -9,7 +9,10 @@ import {
   GetServerResponse,
   IStorageInstance,
   Options,
-  Period, SearchOptions, SearchResponse, SearchServerResponse,
+  Period,
+  SearchOptions,
+  SearchResponse,
+  SearchServerResponse,
   SetResponse,
 } from 'types/storage';
 
@@ -46,8 +49,8 @@ export class Storage extends BaseStorage implements IStorageInstance {
       return { success: false, records: null };
     }
 
-    const response: SearchResponse<T> = {success: true, records: result.records};
-    if (result.cursor){
+    const response: SearchResponse<T> = { success: true, records: result.records };
+    if (result.cursor) {
       response.cursor = result.cursor;
     }
     return response;
