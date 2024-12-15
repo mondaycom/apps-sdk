@@ -26,7 +26,7 @@ This sdk is used to leverage some of the capabilities exposed via `<monday-code 
 
 ### Storage API
 
-There are three methods exposed to manage the storage - `set`, `get` and `delete`
+There are four methods exposed to manage the storage - `set`, `get`, `search` and `delete`
 
 #### Initialize
 
@@ -54,6 +54,12 @@ const { version, success, error } = await storage.set(key, value, { previousVers
 
 ```typescript
 const { value, version, success } = await storage.get(key, { shared });
+```
+
+#### search
+
+```typescript
+const { records, cursor, success } = await storage.get(key, { cursor });
 ```
 
 #### delete
