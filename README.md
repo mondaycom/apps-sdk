@@ -26,7 +26,7 @@ This sdk is used to leverage some of the capabilities exposed via `<monday-code 
 
 ### Storage API
 
-There are four methods exposed to manage the storage - `set`, `get`, `search` sand `delete`
+There are four methods exposed to manage the storage - `set`, `get`, `search` and `delete`
 
 #### Initialize
 
