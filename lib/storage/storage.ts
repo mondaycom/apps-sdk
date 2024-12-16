@@ -42,11 +42,18 @@ export class Storage extends BaseStorage implements IStorageInstance {
   }
 
   async search<T extends JsonValue>(key: string, options: SearchOptions = {}): Promise<SearchResponse<T>> {
+    if (!key?.length){
+        return { success: false, error: 'key cannot be empty', records: null };
+    }
     const url = this.searchUrl(key, options);
     const params = { method: 'GET' };
     const result = await this.storageFetchV2<SearchServerResponse<T>>(url, params);
     if (!isDefined(result)) {
       return { success: false, records: null };
+    }
+
+    if (result.error) {
+      return { success: false, error: result.error, records: null };
     }
 
     const response: SearchResponse<T> = { success: true, records: result.records };

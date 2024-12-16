@@ -43,6 +43,7 @@ export type SearchEntity<T extends JsonValue> = {
 export type SearchServerResponse<T extends JsonValue> = {
   records: Array<SearchEntity<T>> | null
   cursor?: string
+  error?: string
 }
 
 export type SearchResponse<T extends JsonValue> = {

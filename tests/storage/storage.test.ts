@@ -64,5 +64,17 @@ describe('Storage', () => {
       await expect(async () => await storage.search(term)).rejects.toThrow(InternalServerError);
       expect(fetch).toHaveBeenCalledTimes(1);
     });
+
+    it('Should return error that cannot search with empty term', async () => {
+      // Arrange
+      const storage = new Storage(FAKE_TOKEN);
+
+      // Act
+      const res = await storage.search('');
+
+      // Assert
+      expect(res).toEqual({ success: false, error: 'key cannot be empty', records: null });
+      expect(fetch).toHaveBeenCalledTimes(0);
+    });
   });
 });
