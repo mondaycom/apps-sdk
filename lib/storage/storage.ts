@@ -42,6 +42,9 @@ export class Storage extends BaseStorage implements IStorageInstance {
   }
 
   async search<T extends JsonValue>(key: string, options: SearchOptions = {}): Promise<SearchResponse<T>> {
+    if (!key) {
+      return { success: false, records: null };
+    }
     const url = this.searchUrl(key, options);
     const params = { method: 'GET' };
     const result = await this.storageFetchV2<SearchServerResponse<T>>(url, params);

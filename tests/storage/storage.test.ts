@@ -64,5 +64,16 @@ describe('Storage', () => {
       await expect(async () => await storage.search(term)).rejects.toThrow(InternalServerError);
       expect(fetch).toHaveBeenCalledTimes(1);
     });
+
+    it('Should return success false when no key is provided', async () => {
+      // Arrange
+      const storage = new Storage(FAKE_TOKEN);
+
+      // Act
+      const results = await storage.search('');
+
+      // Assert
+      expect(results.success).toEqual(false);
+    });
   });
 });

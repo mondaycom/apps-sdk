@@ -59,7 +59,7 @@ const { value, version, success } = await storage.get(key, { shared });
 #### search
 
 ```typescript
-const { records, cursor, success } = await storage.get(key, { cursor });
+const { records, cursor, success } = await storage.search(key, { cursor });
 ```
 
 #### delete
