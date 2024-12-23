@@ -73,6 +73,7 @@ describe('Storage', () => {
       const results = await storage.search('');
 
       // Assert
+      expect(fetch).toHaveBeenCalledTimes(0);
       expect(results.success).toEqual(false);
     });
   });
