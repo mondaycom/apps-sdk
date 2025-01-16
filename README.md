@@ -58,6 +58,9 @@ const { value, version, success } = await storage.get(key, { shared });
 
 #### search
 
+- `key: string` - key aka 'key part' the key must include this string (case insensitive)
+- `cursor: string` - current position within the paginated dataset (_OPTIONAL_)
+
 ```typescript
 const { records, cursor, success } = await storage.search(key, { cursor });
 ```
