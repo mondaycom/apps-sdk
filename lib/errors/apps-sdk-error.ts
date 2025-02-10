@@ -7,7 +7,7 @@ export enum ERROR_CODE {
   NOT_FOUND = 'not found',
   BAD_REQUEST = 'bad request',
   INTERNAL_SERVER = 'internal server error',
-  TOO_MANY_REQUESTS = 'request limit exceeded'
+  TOO_MANY_REQUESTS = 'too many requests'
 }
 
 export class BaseError extends Error {
