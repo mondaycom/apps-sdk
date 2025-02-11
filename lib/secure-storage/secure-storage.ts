@@ -1,4 +1,4 @@
-import { BadRequestError, InternalServerError } from 'errors/apps-sdk-error';
+import { BadRequestError, BaseError, ERROR_CODE, InternalServerError } from 'errors/apps-sdk-error';
 import { getGcpConnectionData, getGcpIdentityToken } from 'lib/gcp/gcp';
 import { MONDAY_CODE_RESERVED_PRIMITIVES_KEY } from 'lib/secure-storage/secure-storage.consts';
 import { RequestOptions } from 'types/fetch';
@@ -45,6 +45,10 @@ const secureStorageFetch = async <T>(path: string, connectionData: ConnectionDat
   try {
     result = await fetchWrapper<VaultBaseResponse>(path, fetchObj);
   } catch (error: unknown) {
+    if ((error as BaseError).errorCode === ERROR_CODE.TOO_MANY_REQUESTS) {
+      logger.warn('[secureStorageFetch] Rate limit exceeded while communicating with secure storage', { error: error as Error });
+      throw error;
+    }
     logger.error('[secureStorageFetch] Unexpected error occurred while communicating with secure storage', { error: error as Error });
     throw new InternalServerError('An issue occurred while accessing secure storage');
   }
