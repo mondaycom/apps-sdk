@@ -1,14 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 import fetch, { RequestInit, Response } from 'node-fetch';
 
-import { ForbiddenError, TooManyRequestsError } from 'errors/apps-sdk-error';
+import { ForbiddenError } from 'errors/apps-sdk-error';
 
 const handleFetchErrors = (response: Response): void => {
   if (response.status == StatusCodes.FORBIDDEN) {
     throw new ForbiddenError('Forbidden action');
-  }
-  if (response.status == StatusCodes.TOO_MANY_REQUESTS) {
-    throw new TooManyRequestsError('request limit exceeded');
   }
 };
 

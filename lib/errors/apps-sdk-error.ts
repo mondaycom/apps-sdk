@@ -6,8 +6,7 @@ export enum ERROR_CODE {
   FORBIDDEN = 'forbidden',
   NOT_FOUND = 'not found',
   BAD_REQUEST = 'bad request',
-  INTERNAL_SERVER = 'internal server error',
-  TOO_MANY_REQUESTS = 'too many requests'
+  INTERNAL_SERVER = 'internal server error'
 }
 
 export class BaseError extends Error {
@@ -43,11 +42,5 @@ export class InternalServerError extends BaseError {
 export class ForbiddenError extends BaseError {
   constructor(public message: string) {
     super(ERROR_CODE.FORBIDDEN, message, StatusCodes.FORBIDDEN);
-  }
-}
-
-export class TooManyRequestsError extends BaseError {
-  constructor(public message: string) {
-    super(ERROR_CODE.TOO_MANY_REQUESTS, message, StatusCodes.TOO_MANY_REQUESTS);
   }
 }
