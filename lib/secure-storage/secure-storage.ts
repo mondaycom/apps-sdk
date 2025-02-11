@@ -45,8 +45,9 @@ const secureStorageFetch = async <T>(path: string, connectionData: ConnectionDat
   try {
     result = await fetchWrapper<VaultBaseResponse>(path, fetchObj);
   } catch (error: unknown) {
+    logger.error('entered catch', { error: error as Error });
     if (error instanceof TooManyRequestsError) {
-      logger.warn('[secureStorageFetch] Rate limit exceeded while communicating with secure storage');
+      logger.warn('[secureStorageFetch] Rate limit exceeded while communicating with secure storage', { error: error as Error });
       throw error;
     }
     logger.error('[secureStorageFetch] Unexpected error occurred while communicating with secure storage', { error: error as Error });
