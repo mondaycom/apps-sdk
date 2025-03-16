@@ -44,6 +44,7 @@ const storage = new Storage('<ACCESS_TOKEN>');
 - `value: any` - value to store
 - `previousVersion?: string` - the last version of the stored value for a specific key (_OPTIONAL_)
 - `shared?: boolean` - whether the stored data will be accessible from both "backend" and "frontend" oriented apps (_OPTIONAL_)
+- `ttl?: number` - a time value in seconds, after which the value will be deleted and will no longer be available to fetch (_OPTIONAL_)
 - `version: string` - the new version of the stored value
 
 ```typescript
