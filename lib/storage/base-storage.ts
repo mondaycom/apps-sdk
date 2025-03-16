@@ -14,16 +14,12 @@ export abstract class BaseStorage {
 
   protected async storageFetchV2<T>(url: string, options: RequestOptions) {
     const { method, body } = options;
-    const stringifiedBody = JSON.stringify(body);
     if (!isDefined(method)) {
       throw new InternalServerError('An error occurred');
     }
 
-    const headers = {
-      Authorization: this.token,
-      'Content-Type': 'application/json',
-      'User-Agent': 'monday-apps-sdk',
-    };
+    const stringifiedBody = JSON.stringify(body);
+    const headers = this.getRequestHeaders();
 
     let response: T | undefined;
     try {
@@ -42,17 +38,13 @@ export abstract class BaseStorage {
 
   protected async storageFetch<T>(key: string, options: RequestOptions, externalOptions?: Options) {
     const { method, body } = options;
-    const stringifiedBody = JSON.stringify(body);
-    const url = this.generateCrudPath(key, externalOptions);
     if (!isDefined(method)) {
       throw new InternalServerError('An error occurred');
     }
 
-    const headers = {
-      Authorization: this.token,
-      'Content-Type': 'application/json',
-      'User-Agent': 'monday-apps-sdk',
-    };
+    const stringifiedBody = JSON.stringify(body);
+    const url = this.generateCrudPath(key, externalOptions);
+    const headers = this.getRequestHeaders();
 
     let response: T | undefined;
     try {
@@ -89,6 +81,14 @@ export abstract class BaseStorage {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const fullPath = `${storageUrl}/${key}?shareGlobally=${shareGlobally}`;
     return fullPath;
+  }
+
+    private getRequestHeaders() {
+    return {
+      Authorization: this.token,
+      'Content-Type': 'application/json',
+      'User-Agent': 'monday-apps-sdk',
+    };
   }
 
   public counterUrl() {
