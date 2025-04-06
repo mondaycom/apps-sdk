@@ -71,7 +71,7 @@ export class Storage extends BaseStorage implements IStorageInstance {
   }
 
   async set(key: string, value, options: Options = {}) {
-    const { previousVersion } = options;
+    const { previousVersion, ttl } = options;
 
     const result = await this.storageFetch<SetResponse>(key, {
       method: 'POST',
@@ -79,6 +79,7 @@ export class Storage extends BaseStorage implements IStorageInstance {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         value,
         ...previousVersion && { previous_version: previousVersion },
+        ...ttl && { ttl },
       },
     }, options);
 

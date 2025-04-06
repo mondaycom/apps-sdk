@@ -11,7 +11,8 @@ export enum Period {
 
 export type Options = {
   shared?: boolean,
-  previousVersion?: string
+  previousVersion?: string,
+  ttl?: number
 }
 
 export type CounterOptions = {
