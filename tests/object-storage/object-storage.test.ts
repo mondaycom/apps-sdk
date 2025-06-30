@@ -1,5 +1,41 @@
 import { ObjectStorage } from '../../lib/object-storage';
 
+// Mock Google Cloud Storage
+const mockFile = {
+  save: jest.fn(),
+  exists: jest.fn(),
+  download: jest.fn(),
+  getMetadata: jest.fn(),
+  delete: jest.fn(),
+  name: 'test-file.txt',
+};
+
+const mockBucket = {
+  file: jest.fn((fileName: string) => ({
+    ...mockFile,
+    name: fileName,
+    getMetadata: jest.fn().mockResolvedValue([
+      {
+        name: fileName,
+        size: '100',
+        contentType: 'text/plain',
+        updated: '2023-01-01T00:00:00.000Z',
+        etag: 'test-etag',
+        metadata: { 'test-key': 'test-value' },
+      },
+    ]),
+  })),
+  getFiles: jest.fn(),
+};
+
+const mockStorage = {
+  bucket: jest.fn(() => mockBucket),
+};
+
+jest.mock('@google-cloud/storage', () => ({
+  Storage: jest.fn(() => mockStorage),
+}));
+
 describe('ObjectStorage', () => {
   let objectStorage: ObjectStorage;
   const originalEnv = process.env;
@@ -10,6 +46,43 @@ describe('ObjectStorage', () => {
       ...originalEnv,
       OBJECT_STORAGE_BUCKET: 'test-bucket-object-storage',
     };
+
+    // Reset all mocks
+    jest.clearAllMocks();
+
+    // Set up default mock responses
+    mockFile.save.mockResolvedValue(undefined);
+    mockFile.exists.mockResolvedValue([true]);
+    mockFile.download.mockResolvedValue([Buffer.from('file content')]);
+    mockFile.getMetadata.mockResolvedValue([
+      {
+        name: 'test-file.txt',
+        size: '100',
+        contentType: 'text/plain',
+        updated: '2023-01-01T00:00:00.000Z',
+        etag: 'test-etag',
+        metadata: { 'test-key': 'test-value' },
+      },
+    ]);
+    mockFile.delete.mockResolvedValue(undefined);
+
+    mockBucket.getFiles.mockResolvedValue([
+      [
+        {
+          name: 'test-file.txt',
+          metadata: {
+            name: 'test-file.txt',
+            size: '100',
+            contentType: 'text/plain',
+            updated: '2023-01-01T00:00:00.000Z',
+            etag: 'test-etag',
+            metadata: { 'test-key': 'test-value' },
+          },
+        },
+      ],
+      {},
+      {},
+    ]);
 
     objectStorage = new ObjectStorage();
   });
@@ -38,6 +111,9 @@ describe('ObjectStorage', () => {
       const fileName = '';
       const content = 'Hello, World!';
 
+      // Mock file save to throw an error
+      mockFile.save.mockRejectedValueOnce(new Error('Upload failed'));
+
       const result = await objectStorage.uploadFile(fileName, content);
 
       expect(result.success).toBe(false);
@@ -58,6 +134,9 @@ describe('ObjectStorage', () => {
 
     it('should handle file not found', async () => {
       const fileName = 'non-existent-file.txt';
+
+      // Mock file doesn't exist
+      mockFile.exists.mockResolvedValueOnce([false]);
 
       const result = await objectStorage.downloadFile(fileName);
 
@@ -101,6 +180,9 @@ describe('ObjectStorage', () => {
     it('should handle file not found during deletion', async () => {
       const fileName = 'non-existent-file.txt';
 
+      // Mock file doesn't exist
+      mockFile.exists.mockResolvedValueOnce([false]);
+
       const result = await objectStorage.deleteFile(fileName);
 
       expect(result.success).toBe(false);
@@ -124,6 +206,9 @@ describe('ObjectStorage', () => {
 
     it('should handle file not found', async () => {
       const fileName = 'non-existent-file.txt';
+
+      // Mock file doesn't exist
+      mockFile.exists.mockResolvedValueOnce([false]);
 
       const result = await objectStorage.getFileInfo(fileName);
 
