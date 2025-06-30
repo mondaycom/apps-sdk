@@ -1,51 +1,50 @@
-export interface UploadFileOptions {
+export type UploadFileOptions = {
   contentType?: string;
   metadata?: Record<string, string>;
-  public?: boolean;
 }
 
-export interface UploadFileResponse {
+export type UploadFileResponse = {
   success: boolean;
   fileName?: string;
   fileUrl?: string;
   error?: string;
 }
 
-export interface DownloadFileResponse {
+export type DownloadFileResponse = {
   success: boolean;
   content?: Buffer;
   contentType?: string;
   error?: string;
 }
 
-export interface DeleteFileResponse {
+export type DeleteFileResponse = {
   success: boolean;
   error?: string;
 }
 
-export interface ListFilesOptions {
+export type ListFilesOptions = {
   prefix?: string;
   maxResults?: number;
   pageToken?: string;
 }
 
-export interface FileInfo {
+export type FileInfo = {
   name: string;
   size: number;
   contentType: string;
   lastModified: Date;
   etag: string;
-  metadata?: Record<string, string>;
+  metadata: Record<string, string>;
 }
 
-export interface ListFilesResponse {
+export type ListFilesResponse = {
   success: boolean;
-  files?: FileInfo[];
+  files?: Array<FileInfo>;
   nextPageToken?: string;
   error?: string;
 }
 
-export interface GetFileInfoResponse {
+export type GetFileInfoResponse = {
   success: boolean;
   fileInfo?: FileInfo;
   error?: string;

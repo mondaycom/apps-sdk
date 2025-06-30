@@ -1,5 +1,4 @@
 import { Storage } from '@google-cloud/storage';
-import { GoogleAuth } from 'google-auth-library';
 
 import { InternalServerError } from 'errors/apps-sdk-error';
 import {
@@ -25,11 +24,7 @@ export class ObjectStorage {
       throw new InternalServerError('OBJECT_STORAGE_BUCKET is not set');
     }
 
-    const auth = new GoogleAuth({
-      scopes: ['https://www.googleapis.com/auth/cloud-platform']
-    });
-    this.storage = new Storage({ auth });
-    
+    this.storage = new Storage();
     this.bucketName = process.env.OBJECT_STORAGE_BUCKET;
     logger.info(`ObjectStorage initialized with bucket: ${this.bucketName}`);
   }
@@ -42,22 +37,16 @@ export class ObjectStorage {
       const bucket = this.storage.bucket(this.bucketName);
       const file = bucket.file(fileName);
 
-      const uploadOptions: any = {
+      const uploadOptions = {
         metadata: {
           contentType: options.contentType || 'application/octet-stream',
           metadata: options.metadata || {}
         }
       };
 
-      if (options.public) {
-        uploadOptions.predefinedAcl = 'publicRead';
-      }
-
       await file.save(content, uploadOptions);
 
-      const fileUrl = options.public 
-        ? `https://storage.googleapis.com/${this.bucketName}/${fileName}`
-        : `gs://${this.bucketName}/${fileName}`;
+      const fileUrl = `gs://${this.bucketName}/${fileName}`;
 
       logger.info(`File uploaded successfully: ${fileName}`);
       
@@ -66,11 +55,13 @@ export class ObjectStorage {
         fileName,
         fileUrl
       };
-    } catch (error: any) {
-      logger.error('Failed to upload file:', error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to upload file:', { error: errorObj });
       return {
         success: false,
-        error: `Failed to upload file: ${error.message}`
+        error: `Failed to upload file: ${errorMessage}`
       };
     }
   }
@@ -99,11 +90,13 @@ export class ObjectStorage {
         content,
         contentType: metadata.contentType
       };
-    } catch (error: any) {
-      logger.error('Failed to download file:', error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to download file:', { error: errorObj });
       return {
         success: false,
-        error: `Failed to download file: ${error.message}`
+        error: `Failed to download file: ${errorMessage}`
       };
     }
   }
@@ -131,11 +124,13 @@ export class ObjectStorage {
       return {
         success: true
       };
-    } catch (error: any) {
-      logger.error('Failed to delete file:', error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to delete file:', { error: errorObj });
       return {
         success: false,
-        error: `Failed to delete file: ${error.message}`
+        error: `Failed to delete file: ${errorMessage}`
       };
     }
   }
@@ -147,39 +142,40 @@ export class ObjectStorage {
     try {
       const bucket = this.storage.bucket(this.bucketName);
       
-      const queryOptions: any = {
-        maxResults: options.maxResults || 100
+      const queryOptions = {
+        maxResults: options.maxResults || 100,
+        ...(options.prefix && { prefix: options.prefix }),
+        ...(options.pageToken && { pageToken: options.pageToken })
       };
-      
-      if (options.prefix) {
-        queryOptions.prefix = options.prefix;
-      }
-      
-      if (options.pageToken) {
-        queryOptions.pageToken = options.pageToken;
-      }
 
-      const [files, , metadata] = await bucket.getFiles(queryOptions);
+      const [files, , apiResponse] = await bucket.getFiles(queryOptions);
       
-      const fileInfos: FileInfo[] = files.map(file => ({
+      const fileInfos: Array<FileInfo> = files.map(file => ({
         name: file.name,
-        size: parseInt(file.metadata.size) || 0,
+        size: parseInt(file.metadata.size?.toString() || '0') || 0,
         contentType: file.metadata.contentType || 'application/octet-stream',
-        lastModified: new Date(file.metadata.updated),
-        etag: file.metadata.etag,
-        metadata: file.metadata.metadata || {}
+        lastModified: new Date(file.metadata.updated || Date.now()),
+        etag: file.metadata.etag || '',
+        metadata: Object.fromEntries(
+          Object.entries(file.metadata.metadata || {}).map(([key, value]) => [
+            key,
+            String(value || '')
+          ])
+        )
       }));
 
       return {
         success: true,
         files: fileInfos,
-        nextPageToken: metadata?.nextPageToken
+        nextPageToken: (apiResponse as { nextPageToken?: string })?.nextPageToken
       };
-    } catch (error: any) {
-      logger.error('Failed to list files:', error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to list files:', { error: errorObj });
       return {
         success: false,
-        error: `Failed to list files: ${error.message}`
+        error: `Failed to list files: ${errorMessage}`
       };
     }
   }
@@ -204,23 +200,30 @@ export class ObjectStorage {
       
       const fileInfo: FileInfo = {
         name: file.name,
-        size: parseInt(metadata.size) || 0,
+        size: parseInt(metadata.size?.toString() || '0') || 0,
         contentType: metadata.contentType || 'application/octet-stream',
-        lastModified: new Date(metadata.updated),
-        etag: metadata.etag,
-        metadata: metadata.metadata || {}
+        lastModified: new Date(metadata.updated || Date.now()),
+        etag: metadata.etag || '',
+        metadata: Object.fromEntries(
+          Object.entries(metadata.metadata || {}).map(([key, value]) => [
+            key,
+            String(value || '')
+          ])
+        )
       };
 
       return {
         success: true,
         fileInfo
       };
-    } catch (error: any) {
-      logger.error('Failed to get file info:', error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to get file info:', { error: errorObj });
       return {
         success: false,
-        error: `Failed to get file info: ${error.message}`
+        error: `Failed to get file info: ${errorMessage}`
       };
     }
   }
-  }
+}

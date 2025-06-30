@@ -11,10 +11,10 @@ describe('ObjectStorage', () => {
     it('should upload a file successfully', async () => {
       const fileName = 'test-file.txt';
       const content = 'Hello, World!';
-      
+
       const result = await objectStorage.uploadFile(fileName, content, {
         contentType: 'text/plain',
-        metadata: { 'uploaded-by': 'test' }
+        metadata: { 'uploaded-by': 'test' },
       });
 
       expect(result.success).toBe(true);
@@ -25,7 +25,7 @@ describe('ObjectStorage', () => {
     it('should handle upload failure gracefully', async () => {
       const fileName = '';
       const content = 'Hello, World!';
-      
+
       const result = await objectStorage.uploadFile(fileName, content);
 
       expect(result.success).toBe(false);
@@ -36,7 +36,7 @@ describe('ObjectStorage', () => {
   describe('downloadFile', () => {
     it('should download an existing file', async () => {
       const fileName = 'existing-file.txt';
-      
+
       const result = await objectStorage.downloadFile(fileName);
 
       expect(result.success).toBe(true);
@@ -46,7 +46,7 @@ describe('ObjectStorage', () => {
 
     it('should handle file not found', async () => {
       const fileName = 'non-existent-file.txt';
-      
+
       const result = await objectStorage.downloadFile(fileName);
 
       expect(result.success).toBe(false);
@@ -80,7 +80,7 @@ describe('ObjectStorage', () => {
   describe('deleteFile', () => {
     it('should delete an existing file', async () => {
       const fileName = 'file-to-delete.txt';
-      
+
       const result = await objectStorage.deleteFile(fileName);
 
       expect(result.success).toBe(true);
@@ -88,7 +88,7 @@ describe('ObjectStorage', () => {
 
     it('should handle file not found during deletion', async () => {
       const fileName = 'non-existent-file.txt';
-      
+
       const result = await objectStorage.deleteFile(fileName);
 
       expect(result.success).toBe(false);
@@ -99,7 +99,7 @@ describe('ObjectStorage', () => {
   describe('getFileInfo', () => {
     it('should return file information', async () => {
       const fileName = 'info-file.txt';
-      
+
       const result = await objectStorage.getFileInfo(fileName);
 
       expect(result.success).toBe(true);
@@ -112,11 +112,11 @@ describe('ObjectStorage', () => {
 
     it('should handle file not found', async () => {
       const fileName = 'non-existent-file.txt';
-      
+
       const result = await objectStorage.getFileInfo(fileName);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('File not found');
     });
   });
-}); 
+});
