@@ -1,10 +1,22 @@
-import { ObjectStorage } from 'lib/object-storage';
+import { ObjectStorage } from '../../lib/object-storage';
 
 describe('ObjectStorage', () => {
   let objectStorage: ObjectStorage;
+  const originalEnv = process.env;
 
   beforeEach(() => {
+    // Set up test environment
+    process.env = {
+      ...originalEnv,
+      OBJECT_STORAGE_BUCKET: 'test-bucket-object-storage',
+    };
+
     objectStorage = new ObjectStorage();
+  });
+
+  afterEach(() => {
+    // Restore original environment
+    process.env = originalEnv;
   });
 
   describe('uploadFile', () => {
