@@ -16,3 +16,15 @@ export {
   SecretsManager,
   Queue
 };
+
+// Export ObjectStorage types
+export type {
+  UploadFileOptions,
+  UploadFileResponse,
+  DownloadFileResponse,
+  DeleteFileResponse,
+  ListFilesOptions,
+  FileInfo,
+  ListFilesResponse,
+  GetFileInfoResponse
+} from 'lib/object-storage';
