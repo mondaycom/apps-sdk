@@ -1,4 +1,4 @@
-import { Storage } from '@google-cloud/storage';
+import { Bucket, File, Storage } from '@google-cloud/storage';
 
 import { InternalServerError } from 'errors/apps-sdk-error';
 import {
@@ -34,8 +34,8 @@ export class ObjectStorage {
    */
   async uploadFile(fileName: string, content: Buffer | string, options: UploadFileOptions = {}): Promise<UploadFileResponse> {
     try {
-      const bucket = this.storage.bucket(this.bucketName);
-      const file = bucket.file(fileName);
+      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const file: File = bucket.file(fileName);
 
       const uploadOptions = {
         metadata: {
@@ -71,8 +71,8 @@ export class ObjectStorage {
    */
   async downloadFile(fileName: string): Promise<DownloadFileResponse> {
     try {
-      const bucket = this.storage.bucket(this.bucketName);
-      const file = bucket.file(fileName);
+      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const file: File = bucket.file(fileName);
       
       const [exists] = await file.exists();
       if (!exists) {
@@ -88,7 +88,7 @@ export class ObjectStorage {
       return {
         success: true,
         content,
-        contentType: metadata.contentType
+        contentType: metadata.contentType || 'application/octet-stream'
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -106,8 +106,8 @@ export class ObjectStorage {
    */
   async deleteFile(fileName: string): Promise<DeleteFileResponse> {
     try {
-      const bucket = this.storage.bucket(this.bucketName);
-      const file = bucket.file(fileName);
+      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const file: File = bucket.file(fileName);
       
       const [exists] = await file.exists();
       if (!exists) {
@@ -140,7 +140,7 @@ export class ObjectStorage {
    */
   async listFiles(options: ListFilesOptions = {}): Promise<ListFilesResponse> {
     try {
-      const bucket = this.storage.bucket(this.bucketName);
+      const bucket: Bucket = this.storage.bucket(this.bucketName);
       
       const queryOptions = {
         maxResults: options.maxResults || 100,
@@ -150,9 +150,9 @@ export class ObjectStorage {
 
       const [files, , apiResponse] = await bucket.getFiles(queryOptions);
       
-      const fileInfos: Array<FileInfo> = files.map(file => ({
+      const fileInfos: Array<FileInfo> = files.map((file: File) => ({
         name: file.name,
-        size: parseInt(file.metadata.size?.toString() || '0') || 0,
+        size: parseInt(String(file.metadata.size || '0'), 10) || 0,
         contentType: file.metadata.contentType || 'application/octet-stream',
         lastModified: new Date(file.metadata.updated || Date.now()),
         etag: file.metadata.etag || '',
@@ -185,8 +185,8 @@ export class ObjectStorage {
    */
   async getFileInfo(fileName: string): Promise<GetFileInfoResponse> {
     try {
-      const bucket = this.storage.bucket(this.bucketName);
-      const file = bucket.file(fileName);
+      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const file: File = bucket.file(fileName);
       
       const [exists] = await file.exists();
       if (!exists) {
@@ -200,7 +200,7 @@ export class ObjectStorage {
       
       const fileInfo: FileInfo = {
         name: file.name,
-        size: parseInt(metadata.size?.toString() || '0') || 0,
+        size: parseInt(String(metadata.size || '0'), 10) || 0,
         contentType: metadata.contentType || 'application/octet-stream',
         lastModified: new Date(metadata.updated || Date.now()),
         etag: metadata.etag || '',
