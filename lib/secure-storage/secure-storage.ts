@@ -162,6 +162,26 @@ const authenticate = async (connectionData: ConnectionData): Promise<ConnectionD
 };
 
 let connectionData: ConnectionData;
+let authenticationPromise: Promise<ConnectionData> | null = null;
+
+const authenticateWithMutex = async (currentConnectionData: ConnectionData): Promise<ConnectionData> => {
+  // If there's already an authentication in progress, wait for it
+  if (authenticationPromise) {
+    return authenticationPromise;
+  }
+
+  // Start a new authentication and cache the promise
+  authenticationPromise = authenticate(currentConnectionData);
+  
+  try {
+    const result = await authenticationPromise;
+    connectionData = result; // Update the global connection data
+    return result;
+  } finally {
+    // Clear the promise when done (success or failure)
+    authenticationPromise = null;
+  }
+};
 
 export class SecureStorage implements ISecureStorageInstance {
   
@@ -170,14 +190,14 @@ export class SecureStorage implements ISecureStorageInstance {
   }
   
   async delete(key: string) {
-    connectionData = await authenticate(connectionData);
+    connectionData = await authenticateWithMutex(connectionData);
     const fullPath = generateCrudPath(key, connectionData.id);
     await secureStorageFetch<VaultBaseResponse>(fullPath, connectionData, { method: 'DELETE' });
     return true;
   }
   
   async get<T>(key: string) {
-    connectionData = await authenticate(connectionData);
+    connectionData = await authenticateWithMutex(connectionData);
     const fullPath = generateCrudPath(key, connectionData.id);
     const result = await secureStorageFetch<VaultBaseResponse>(fullPath, connectionData, { method: 'GET' });
     if (!isDefined(result) || !isDefined(result?.data)) {
@@ -192,7 +212,7 @@ export class SecureStorage implements ISecureStorageInstance {
   }
   
   async set<T extends JsonValue>(key: string, value: T) {
-    connectionData = await authenticate(connectionData);
+    connectionData = await authenticateWithMutex(connectionData);
     const fullPath = generateCrudPath(key, connectionData.id);
     const formalizedValue = isObject(value) ? value : { [MONDAY_CODE_RESERVED_PRIMITIVES_KEY]: value };
     await secureStorageFetch<VaultBaseResponse>(fullPath, connectionData, {
