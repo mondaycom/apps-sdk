@@ -151,20 +151,85 @@ describe('ObjectStorage', () => {
 
       expect(result.success).toBe(true);
       expect(Array.isArray(result.files)).toBe(true);
+      expect(mockBucket.getFiles).toHaveBeenCalledWith({
+        maxResults: 100, // default value
+      });
     });
 
     it('should list files with prefix filter', async () => {
-      const result = await objectStorage.listFiles({ prefix: 'test-' });
+      const prefix = 'test-';
+      const result = await objectStorage.listFiles({ prefix });
 
       expect(result.success).toBe(true);
       expect(Array.isArray(result.files)).toBe(true);
+      expect(mockBucket.getFiles).toHaveBeenCalledWith({
+        maxResults: 100,
+        prefix: 'test-',
+      });
     });
 
     it('should list files with pagination', async () => {
-      const result = await objectStorage.listFiles({ maxResults: 10 });
+      const maxResults = 10;
+      const result = await objectStorage.listFiles({ maxResults });
 
       expect(result.success).toBe(true);
       expect(Array.isArray(result.files)).toBe(true);
+      expect(mockBucket.getFiles).toHaveBeenCalledWith({
+        maxResults: 10,
+      });
+    });
+
+    it('should list files with all options', async () => {
+      const options = {
+        prefix: 'uploads/',
+        maxResults: 5,
+        pageToken: 'next-page-token',
+      };
+
+      const result = await objectStorage.listFiles(options);
+
+      expect(result.success).toBe(true);
+      expect(Array.isArray(result.files)).toBe(true);
+      expect(mockBucket.getFiles).toHaveBeenCalledWith({
+        maxResults: 5,
+        prefix: 'uploads/',
+        pageToken: 'next-page-token',
+      });
+    });
+
+    it('should handle next page token in response', async () => {
+      // Mock response with next page token
+      mockBucket.getFiles.mockResolvedValueOnce([
+        [
+          {
+            name: 'test-file.txt',
+            metadata: {
+              name: 'test-file.txt',
+              size: '100',
+              contentType: 'text/plain',
+              updated: '2023-01-01T00:00:00.000Z',
+              etag: 'test-etag',
+              metadata: { 'test-key': 'test-value' },
+            },
+          },
+        ],
+        {},
+        { nextPageToken: 'page-2-token' }, // API response with next page token
+      ]);
+
+      const result = await objectStorage.listFiles({ maxResults: 1 });
+
+      expect(result.success).toBe(true);
+      expect(result.nextPageToken).toBe('page-2-token');
+    });
+
+    it('should handle list files error', async () => {
+      mockBucket.getFiles.mockRejectedValueOnce(new Error('List failed'));
+
+      const result = await objectStorage.listFiles();
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Failed to list files');
     });
   });
 

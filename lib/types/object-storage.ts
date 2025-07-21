@@ -1,26 +1,24 @@
+export type BaseResponse = {
+  success: boolean;
+  error?: string;
+}
+
 export type UploadFileOptions = {
   contentType?: string;
   metadata?: Record<string, string>;
 }
 
-export type UploadFileResponse = {
-  success: boolean;
+export type UploadFileResponse = BaseResponse & {
   fileName?: string;
   fileUrl?: string;
-  error?: string;
 }
 
-export type DownloadFileResponse = {
-  success: boolean;
+export type DownloadFileResponse = BaseResponse & {
   content?: Buffer;
   contentType?: string;
-  error?: string;
 }
 
-export type DeleteFileResponse = {
-  success: boolean;
-  error?: string;
-}
+export type DeleteFileResponse = BaseResponse;
 
 export type ListFilesOptions = {
   prefix?: string;
@@ -37,15 +35,11 @@ export type FileInfo = {
   metadata: Record<string, string>;
 }
 
-export type ListFilesResponse = {
-  success: boolean;
+export type ListFilesResponse = BaseResponse & {
   files?: Array<FileInfo>;
   nextPageToken?: string;
-  error?: string;
 }
 
-export type GetFileInfoResponse = {
-  success: boolean;
+export type GetFileInfoResponse = BaseResponse & {
   fileInfo?: FileInfo;
-  error?: string;
 }

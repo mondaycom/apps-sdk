@@ -29,12 +29,20 @@ export class ObjectStorage {
     logger.info(`ObjectStorage initialized with bucket: ${this.bucketName}`);
   }
 
-  /**
-   * Upload a file to the object storage bucket
-   */
+  private getBucket(): Bucket {
+    return this.storage.bucket(this.bucketName);
+  }
+
+  private handleError(error: unknown, operation: string): { errorMessage: string; errorObj: Error } {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+    logger.error(`Failed to ${operation}:`, { error: errorObj });
+    return { errorMessage, errorObj };
+  }
+
   async uploadFile(fileName: string, content: Buffer | string, options: UploadFileOptions = {}): Promise<UploadFileResponse> {
     try {
-      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const bucket = this.getBucket();
       const file: File = bucket.file(fileName);
 
       const uploadOptions = {
@@ -56,9 +64,7 @@ export class ObjectStorage {
         fileUrl
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorObj = error instanceof Error ? error : new Error(String(error));
-      logger.error('Failed to upload file:', { error: errorObj });
+      const { errorMessage } = this.handleError(error, 'upload file');
       return {
         success: false,
         error: `Failed to upload file: ${errorMessage}`
@@ -66,12 +72,9 @@ export class ObjectStorage {
     }
   }
 
-  /**
-   * Download a file from the object storage bucket
-   */
   async downloadFile(fileName: string): Promise<DownloadFileResponse> {
     try {
-      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const bucket = this.getBucket();
       const file: File = bucket.file(fileName);
       
       const [exists] = await file.exists();
@@ -91,9 +94,7 @@ export class ObjectStorage {
         contentType: metadata.contentType || 'application/octet-stream'
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorObj = error instanceof Error ? error : new Error(String(error));
-      logger.error('Failed to download file:', { error: errorObj });
+      const { errorMessage } = this.handleError(error, 'download file');
       return {
         success: false,
         error: `Failed to download file: ${errorMessage}`
@@ -101,12 +102,9 @@ export class ObjectStorage {
     }
   }
 
-  /**
-   * Delete a file from the object storage bucket
-   */
   async deleteFile(fileName: string): Promise<DeleteFileResponse> {
     try {
-      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const bucket = this.getBucket();
       const file: File = bucket.file(fileName);
       
       const [exists] = await file.exists();
@@ -121,13 +119,9 @@ export class ObjectStorage {
       
       logger.info(`File deleted successfully: ${fileName}`);
       
-      return {
-        success: true
-      };
+      return { success: true };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorObj = error instanceof Error ? error : new Error(String(error));
-      logger.error('Failed to delete file:', { error: errorObj });
+      const { errorMessage } = this.handleError(error, 'delete file');
       return {
         success: false,
         error: `Failed to delete file: ${errorMessage}`
@@ -135,12 +129,9 @@ export class ObjectStorage {
     }
   }
 
-  /**
-   * List files in the object storage bucket
-   */
   async listFiles(options: ListFilesOptions = {}): Promise<ListFilesResponse> {
     try {
-      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const bucket = this.getBucket();
       
       const queryOptions = {
         maxResults: options.maxResults || 100,
@@ -170,9 +161,7 @@ export class ObjectStorage {
         nextPageToken: (apiResponse as { nextPageToken?: string })?.nextPageToken
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorObj = error instanceof Error ? error : new Error(String(error));
-      logger.error('Failed to list files:', { error: errorObj });
+      const { errorMessage } = this.handleError(error, 'list files');
       return {
         success: false,
         error: `Failed to list files: ${errorMessage}`
@@ -180,12 +169,9 @@ export class ObjectStorage {
     }
   }
 
-  /**
-   * Get information about a specific file
-   */
   async getFileInfo(fileName: string): Promise<GetFileInfoResponse> {
     try {
-      const bucket: Bucket = this.storage.bucket(this.bucketName);
+      const bucket = this.getBucket();
       const file: File = bucket.file(fileName);
       
       const [exists] = await file.exists();
@@ -217,9 +203,7 @@ export class ObjectStorage {
         fileInfo
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorObj = error instanceof Error ? error : new Error(String(error));
-      logger.error('Failed to get file info:', { error: errorObj });
+      const { errorMessage } = this.handleError(error, 'get file info');
       return {
         success: false,
         error: `Failed to get file info: ${errorMessage}`
