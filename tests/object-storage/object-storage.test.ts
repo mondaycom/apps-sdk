@@ -7,6 +7,7 @@ const mockFile = {
   download: jest.fn(),
   getMetadata: jest.fn(),
   delete: jest.fn(),
+  getSignedUrl: jest.fn(),
   name: 'test-file.txt',
 };
 
@@ -65,6 +66,9 @@ describe('ObjectStorage', () => {
       },
     ]);
     mockFile.delete.mockResolvedValue(undefined);
+    mockFile.getSignedUrl.mockResolvedValue([
+      'https://storage.googleapis.com/test-bucket/test-file.txt?signed-url-params',
+    ]);
 
     mockBucket.getFiles.mockResolvedValue([
       [
@@ -279,6 +283,138 @@ describe('ObjectStorage', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('File not found');
+    });
+  });
+
+  describe('getPresignedUploadUrl', () => {
+    it('should generate a presigned upload URL successfully', async () => {
+      const fileName = 'upload-file.txt';
+      const expectedUrl = 'https://storage.googleapis.com/test-bucket/upload-file.txt?signed-url-params';
+
+      mockFile.getSignedUrl.mockResolvedValueOnce([expectedUrl]);
+
+      const result = await objectStorage.getPresignedUploadUrl(fileName);
+
+      expect(result.success).toBe(true);
+      expect(result.presignedUrl).toBe(expectedUrl);
+      expect(result.fileName).toBe(fileName);
+      expect(mockFile.getSignedUrl).toHaveBeenCalledWith({
+        version: 'v4',
+        action: 'write',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        expires: expect.any(Date),
+      });
+    });
+
+    it('should generate a presigned upload URL with custom expiration', async () => {
+      const fileName = 'upload-file.txt';
+      const customExpires = new Date('2024-12-31T23:59:59Z');
+      const expectedUrl = 'https://storage.googleapis.com/test-bucket/upload-file.txt?signed-url-params';
+
+      mockFile.getSignedUrl.mockResolvedValueOnce([expectedUrl]);
+
+      const result = await objectStorage.getPresignedUploadUrl(fileName, { expires: customExpires });
+
+      expect(result.success).toBe(true);
+      expect(result.presignedUrl).toBe(expectedUrl);
+      expect(result.fileName).toBe(fileName);
+      expect(mockFile.getSignedUrl).toHaveBeenCalledWith({
+        version: 'v4',
+        action: 'write',
+        expires: customExpires,
+      });
+    });
+
+    it('should generate a presigned upload URL with content type restriction', async () => {
+      const fileName = 'upload-file.txt';
+      const contentType = 'text/plain';
+      const expectedUrl = 'https://storage.googleapis.com/test-bucket/upload-file.txt?signed-url-params';
+
+      mockFile.getSignedUrl.mockResolvedValueOnce([expectedUrl]);
+
+      const result = await objectStorage.getPresignedUploadUrl(fileName, { contentType });
+
+      expect(result.success).toBe(true);
+      expect(result.presignedUrl).toBe(expectedUrl);
+      expect(result.fileName).toBe(fileName);
+      expect(mockFile.getSignedUrl).toHaveBeenCalledWith({
+        version: 'v4',
+        action: 'write',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        expires: expect.any(Date),
+        contentType: 'text/plain',
+      });
+    });
+
+    it('should generate a presigned upload URL with all options', async () => {
+      const fileName = 'upload-file.txt';
+      const customExpires = new Date('2024-12-31T23:59:59Z');
+      const contentType = 'application/json';
+      const expectedUrl = 'https://storage.googleapis.com/test-bucket/upload-file.txt?signed-url-params';
+
+      mockFile.getSignedUrl.mockResolvedValueOnce([expectedUrl]);
+
+      const result = await objectStorage.getPresignedUploadUrl(fileName, {
+        expires: customExpires,
+        contentType,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.presignedUrl).toBe(expectedUrl);
+      expect(result.fileName).toBe(fileName);
+      expect(mockFile.getSignedUrl).toHaveBeenCalledWith({
+        version: 'v4',
+        action: 'write',
+        expires: customExpires,
+        contentType: 'application/json',
+      });
+    });
+
+    it('should use default expiration when no expires option is provided', async () => {
+      const fileName = 'upload-file.txt';
+      const expectedUrl = 'https://storage.googleapis.com/test-bucket/upload-file.txt?signed-url-params';
+
+      mockFile.getSignedUrl.mockResolvedValueOnce([expectedUrl]);
+
+      // Mock Date.now to have predictable test results
+      const mockNow = new Date('2023-01-01T12:00:00Z').getTime();
+      const originalDateNow = Date.now;
+      Date.now = jest.fn(() => mockNow);
+
+      const result = await objectStorage.getPresignedUploadUrl(fileName);
+
+      expect(result.success).toBe(true);
+      expect(mockFile.getSignedUrl).toHaveBeenCalledWith({
+        version: 'v4',
+        action: 'write',
+        expires: new Date(mockNow + 15 * 60 * 1000), // 15 minutes from mockNow
+      });
+
+      // Restore original Date.now
+      Date.now = originalDateNow;
+    });
+
+    it('should handle presigned URL generation failure', async () => {
+      const fileName = 'upload-file.txt';
+
+      mockFile.getSignedUrl.mockRejectedValueOnce(new Error('Signing failed'));
+
+      const result = await objectStorage.getPresignedUploadUrl(fileName);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Failed to generate presigned upload URL');
+      expect(result.presignedUrl).toBeUndefined();
+    });
+
+    it('should handle empty file name gracefully', async () => {
+      const fileName = '';
+
+      mockFile.getSignedUrl.mockRejectedValueOnce(new Error('Invalid file name'));
+
+      const result = await objectStorage.getPresignedUploadUrl(fileName);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Failed to generate presigned upload URL');
     });
   });
 });

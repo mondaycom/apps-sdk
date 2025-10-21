@@ -1,6 +1,7 @@
 import { Bucket, File, Storage } from '@google-cloud/storage';
 
 import { InternalServerError } from 'errors/apps-sdk-error';
+import { TIME_IN_MILLISECOND } from 'lib/utils/time-enum';
 import {
   DeleteFileResponse,
   DownloadFileResponse,
@@ -8,6 +9,8 @@ import {
   GetFileInfoResponse,
   ListFilesOptions,
   ListFilesResponse,
+  PresignedUrlOptions,
+  PresignedUrlResponse,
   UploadFileOptions,
   UploadFileResponse
 } from 'types/object-storage';
@@ -207,6 +210,41 @@ export class ObjectStorage {
       return {
         success: false,
         error: `Failed to get file info: ${errorMessage}`
+      };
+    }
+  }
+
+  async getPresignedUploadUrl(fileName: string, options: PresignedUrlOptions = {}): Promise<PresignedUrlResponse> {
+    try {
+      const bucket = this.getBucket();
+      const file: File = bucket.file(fileName);
+
+      const fifteenMinutesFromNow = new Date(Date.now() + TIME_IN_MILLISECOND.MINUTE * 15);
+      const expires = options.expires || fifteenMinutesFromNow;
+      
+      const signedUrlOptions = {
+        version: 'v4' as const,
+        action: 'write' as const,
+        expires,
+        ...(options.contentType && {
+          contentType: options.contentType
+        })
+      };
+
+      const [presignedUrl] = await file.getSignedUrl(signedUrlOptions);
+
+      logger.info(`Presigned upload URL generated for file: ${fileName}`);
+      
+      return {
+        success: true,
+        presignedUrl,
+        fileName
+      };
+    } catch (error) {
+      const { errorMessage } = this.handleError(error, 'generate presigned upload URL');
+      return {
+        success: false,
+        error: `Failed to generate presigned upload URL: ${errorMessage}`
       };
     }
   }

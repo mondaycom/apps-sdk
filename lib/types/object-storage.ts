@@ -43,3 +43,13 @@ export type ListFilesResponse = BaseResponse & {
 export type GetFileInfoResponse = BaseResponse & {
   fileInfo?: FileInfo;
 }
+
+export type PresignedUrlOptions = {
+  expires?: Date;
+  contentType?: string;
+}
+
+export type PresignedUrlResponse = BaseResponse & {
+  presignedUrl?: string;
+  fileName?: string;
+}
