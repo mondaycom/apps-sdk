@@ -222,13 +222,18 @@ export class ObjectStorage {
       const fifteenMinutesFromNow = new Date(Date.now() + TIME_IN_MILLISECOND.MINUTE * 15);
       const expires = options.expires || fifteenMinutesFromNow;
       
+      const maxFileSizeBytes = options.maxFileSizeBytes || (50 * 1024 * 1024 * 1024);
+      
       const signedUrlOptions = {
         version: 'v4' as const,
         action: 'write' as const,
         expires,
         ...(options.contentType && {
           contentType: options.contentType
-        })
+        }),
+        extensionHeaders: {
+          'x-goog-content-length-range': `0,${maxFileSizeBytes}`
+        }
       };
 
       const [presignedUrl] = await file.getSignedUrl(signedUrlOptions);

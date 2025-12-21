@@ -303,6 +303,9 @@ describe('ObjectStorage', () => {
         action: 'write',
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         expires: expect.any(Date),
+        extensionHeaders: {
+          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+        },
       });
     });
 
@@ -322,6 +325,9 @@ describe('ObjectStorage', () => {
         version: 'v4',
         action: 'write',
         expires: customExpires,
+        extensionHeaders: {
+          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+        },
       });
     });
 
@@ -343,6 +349,9 @@ describe('ObjectStorage', () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         expires: expect.any(Date),
         contentType: 'text/plain',
+        extensionHeaders: {
+          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+        },
       });
     });
 
@@ -367,6 +376,9 @@ describe('ObjectStorage', () => {
         action: 'write',
         expires: customExpires,
         contentType: 'application/json',
+        extensionHeaders: {
+          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+        },
       });
     });
 
@@ -388,6 +400,9 @@ describe('ObjectStorage', () => {
         version: 'v4',
         action: 'write',
         expires: new Date(mockNow + 15 * 60 * 1000), // 15 minutes from mockNow
+        extensionHeaders: {
+          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+        },
       });
 
       // Restore original Date.now
@@ -415,6 +430,25 @@ describe('ObjectStorage', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('Failed to generate presigned upload URL');
+    });
+
+    it('should enforce 50 GB max file size limit', async () => {
+      const fileName = 'large-file.bin';
+      const expectedUrl = 'https://storage.googleapis.com/test-bucket/large-file.bin?signed-url-params';
+      const fiftyGBInBytes = 50 * 1024 * 1024 * 1024; // 53,687,091,200 bytes
+
+      mockFile.getSignedUrl.mockResolvedValueOnce([expectedUrl]);
+
+      const result = await objectStorage.getPresignedUploadUrl(fileName);
+
+      expect(result.success).toBe(true);
+      expect(mockFile.getSignedUrl).toHaveBeenCalledWith(
+        expect.objectContaining({
+          extensionHeaders: {
+            'x-goog-content-length-range': `0,${fiftyGBInBytes}`,
+          },
+        }),
+      );
     });
   });
 });
