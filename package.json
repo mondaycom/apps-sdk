@@ -1,6 +1,6 @@
 {
   "name": "@mondaycom/apps-sdk",
-  "version": "3.3.0",
+  "version": "3.3.0-beta.7",
   "description": "monday apps SDK for NodeJS",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",

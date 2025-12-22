@@ -222,7 +222,7 @@ export class ObjectStorage {
       const fifteenMinutesFromNow = new Date(Date.now() + TIME_IN_MILLISECOND.MINUTE * 15);
       const expires = options.expires || fifteenMinutesFromNow;
       
-      const maxFileSizeBytes = options.maxFileSizeBytes || (50 * 1024 * 1024 * 1024);
+      const maxFileSizeBytes = options.maxFileSizeBytes || (50 * 1024 * 1024);
       
       const signedUrlOptions = {
         version: 'v4' as const,

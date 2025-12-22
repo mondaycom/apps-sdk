@@ -304,7 +304,7 @@ describe('ObjectStorage', () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         expires: expect.any(Date),
         extensionHeaders: {
-          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+          'x-goog-content-length-range': '0,52428800', // 50 MB default limit
         },
       });
     });
@@ -326,7 +326,7 @@ describe('ObjectStorage', () => {
         action: 'write',
         expires: customExpires,
         extensionHeaders: {
-          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+          'x-goog-content-length-range': '0,52428800', // 50 MB default limit
         },
       });
     });
@@ -350,7 +350,7 @@ describe('ObjectStorage', () => {
         expires: expect.any(Date),
         contentType: 'text/plain',
         extensionHeaders: {
-          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+          'x-goog-content-length-range': '0,52428800', // 50 MB default limit
         },
       });
     });
@@ -377,7 +377,7 @@ describe('ObjectStorage', () => {
         expires: customExpires,
         contentType: 'application/json',
         extensionHeaders: {
-          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+          'x-goog-content-length-range': '0,52428800', // 50 MB default limit
         },
       });
     });
@@ -401,7 +401,7 @@ describe('ObjectStorage', () => {
         action: 'write',
         expires: new Date(mockNow + 15 * 60 * 1000), // 15 minutes from mockNow
         extensionHeaders: {
-          'x-goog-content-length-range': '0,53687091200', // 50 GB default limit
+          'x-goog-content-length-range': '0,52428800', // 50 MB default limit
         },
       });
 
@@ -432,10 +432,10 @@ describe('ObjectStorage', () => {
       expect(result.error).toContain('Failed to generate presigned upload URL');
     });
 
-    it('should enforce 50 GB max file size limit', async () => {
+    it('should enforce 50 MB max file size limit', async () => {
       const fileName = 'large-file.bin';
       const expectedUrl = 'https://storage.googleapis.com/test-bucket/large-file.bin?signed-url-params';
-      const fiftyGBInBytes = 50 * 1024 * 1024 * 1024; // 53,687,091,200 bytes
+      const fiftyMBInBytes = 50 * 1024 * 1024; // 52,428,800 bytes
 
       mockFile.getSignedUrl.mockResolvedValueOnce([expectedUrl]);
 
@@ -445,7 +445,7 @@ describe('ObjectStorage', () => {
       expect(mockFile.getSignedUrl).toHaveBeenCalledWith(
         expect.objectContaining({
           extensionHeaders: {
-            'x-goog-content-length-range': `0,${fiftyGBInBytes}`,
+            'x-goog-content-length-range': `0,${fiftyMBInBytes}`,
           },
         }),
       );
