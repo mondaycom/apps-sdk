@@ -47,7 +47,6 @@ export type GetFileInfoResponse = BaseResponse & {
 export type PresignedUrlOptions = {
   expires?: Date;
   contentType?: string;
-  maxFileSizeBytes?: number;
 }
 
 export type PresignedUrlResponse = BaseResponse & {
