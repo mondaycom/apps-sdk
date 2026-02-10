@@ -18,6 +18,9 @@ import { Logger } from 'utils/logger';
 
 const logger = new Logger('ObjectStorage', { mondayInternal: true });
 
+// Maximum file size limit: 50 MB
+const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
+
 export class ObjectStorage {
   private storage: Storage;
   private bucketName: string;
@@ -45,6 +48,18 @@ export class ObjectStorage {
 
   async uploadFile(fileName: string, content: Buffer | string, options: UploadFileOptions = {}): Promise<UploadFileResponse> {
     try {
+      // Validate file size (50 MB limit)
+      const contentSize = Buffer.isBuffer(content) 
+        ? content.length 
+        : Buffer.byteLength(content, 'utf8');
+      
+      if (contentSize > MAX_FILE_SIZE_BYTES) {
+        return {
+          success: false,
+          error: `File size exceeds maximum allowed size of ${MAX_FILE_SIZE_BYTES / (1024 * 1024)} MB`
+        };
+      }
+
       const bucket = this.getBucket();
       const file: File = bucket.file(fileName);
 
@@ -222,8 +237,7 @@ export class ObjectStorage {
       const fifteenMinutesFromNow = new Date(Date.now() + TIME_IN_MILLISECOND.MINUTE * 15);
       const expires = options.expires || fifteenMinutesFromNow;
       
-      const maxFileSizeBytes = options.maxFileSizeBytes || (50 * 1024 * 1024);
-      
+      // Always enforce 50 MB limit - not configurable
       const signedUrlOptions = {
         version: 'v4' as const,
         action: 'write' as const,
@@ -232,7 +246,7 @@ export class ObjectStorage {
           contentType: options.contentType
         }),
         extensionHeaders: {
-          'x-goog-content-length-range': `0,${maxFileSizeBytes}`
+          'x-goog-content-length-range': `0,${MAX_FILE_SIZE_BYTES}`
         }
       };
 
