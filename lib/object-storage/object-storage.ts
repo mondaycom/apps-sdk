@@ -18,7 +18,6 @@ import { Logger } from 'utils/logger';
 
 const logger = new Logger('ObjectStorage', { mondayInternal: true });
 
-// Maximum file size limit: 50 MB
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
 
 export class ObjectStorage {
@@ -237,7 +236,6 @@ export class ObjectStorage {
       const fifteenMinutesFromNow = new Date(Date.now() + TIME_IN_MILLISECOND.MINUTE * 15);
       const expires = options.expires || fifteenMinutesFromNow;
       
-      // Always enforce 50 MB limit - not configurable
       const signedUrlOptions = {
         version: 'v4' as const,
         action: 'write' as const,
