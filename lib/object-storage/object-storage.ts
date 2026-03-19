@@ -18,7 +18,7 @@ import { Logger } from 'utils/logger';
 
 const logger = new Logger('ObjectStorage', { mondayInternal: true });
 
-const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
+const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
 
 export class ObjectStorage {
   private storage: Storage;
