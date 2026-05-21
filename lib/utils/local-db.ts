@@ -87,8 +87,14 @@ export class LocalDb implements ILocalStorageInstance {
     
     this.memoryData = {};
   }
+
+  private refreshMemoryData() {
+    const stringifiedDbData = readFileSync(this.dbFilePath, 'utf-8');
+    this.memoryData = isDefined(stringifiedDbData) ? JSON.parse(stringifiedDbData) : {};
+  }
   
   async set<T>(key: string, value: T) {
+    this.refreshMemoryData();
     this.memoryData[key] = value;
     
     writeFileSync(this.dbFilePath, JSON.stringify(this.memoryData));
@@ -96,6 +102,7 @@ export class LocalDb implements ILocalStorageInstance {
   }
   
   async delete(key: string) {
+    this.refreshMemoryData();
     delete this.memoryData[key];
     
     writeFileSync(this.dbFilePath, JSON.stringify(this.memoryData));
