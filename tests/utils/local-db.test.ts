@@ -154,6 +154,29 @@ describe('local-db', () => {
 
           expect(writeFileSync).toBeCalledWith(expect.any(String), MOCK_STORED_DATA);
         });
+
+        it('should keep values written by another local db instance', async () => {
+          let storedData = { [MOCK_KEY]: MOCK_VALUE };
+          (readFileSync as jest.Mock).mockImplementation(() => JSON.stringify(storedData));
+          (writeFileSync as jest.Mock).mockImplementation((_path, data: string) => {
+            storedData = JSON.parse(data) as typeof storedData;
+          });
+
+          const firstDbInstance = new localDb.LocalDb();
+          const secondDbInstance = new localDb.LocalDb();
+
+          await firstDbInstance.set('first', 'first-value');
+          await secondDbInstance.set('second', 'second-value');
+
+          expect(writeFileSync).toHaveBeenLastCalledWith(
+            expect.any(String),
+            JSON.stringify({
+              [MOCK_KEY]: MOCK_VALUE,
+              first: 'first-value',
+              second: 'second-value',
+            }),
+          );
+        });
       });
 
       describe('delete', () => {
@@ -161,6 +184,28 @@ describe('local-db', () => {
           await localDbInstance.delete(MOCK_KEY);
 
           expect(writeFileSync).toBeCalledWith(expect.any(String), MOCK_EMPTY_STORED_DATA);
+        });
+
+        it('should keep values written by another local db instance', async () => {
+          let storedData = { [MOCK_KEY]: MOCK_VALUE, first: 'first-value' };
+          (readFileSync as jest.Mock).mockImplementation(() => JSON.stringify(storedData));
+          (writeFileSync as jest.Mock).mockImplementation((_path, data: string) => {
+            storedData = JSON.parse(data) as typeof storedData;
+          });
+
+          const firstDbInstance = new localDb.LocalDb();
+          const secondDbInstance = new localDb.LocalDb();
+
+          await firstDbInstance.set('second', 'second-value');
+          await secondDbInstance.delete(MOCK_KEY);
+
+          expect(writeFileSync).toHaveBeenLastCalledWith(
+            expect.any(String),
+            JSON.stringify({
+              first: 'first-value',
+              second: 'second-value',
+            }),
+          );
         });
 
         it('should not fail for multiple deletions of the same key', async () => {
